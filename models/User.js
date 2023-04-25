@@ -1,40 +1,73 @@
 const {Schema,model} = require('mongoose');
 
-const UserSchema = new Schema({
-    name:{
-        type: String,
-        required: [true,"nombre obligatorio"],
-        trim: true,
-        minLength: [3,'no puede tener menos de 3 caracteres'],
-        maxLength: [30, 'no puede tener mas de 30 caracteres']
+const UserSchema = new Schema(
+  {
+    nombreUsuario: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      minLength: [4, "Debe tener al menos 4 caracteres"],
+      maxLength: [20, "Debe tener como máximo 20 caracteres"],
+      required: [true, "El nombre de usuario es requerido"],
     },
-    email:{
+    nombre: {
         type: String,
-        required:[true,'el email es obligatorio'],
         trim:true,
-        unique: [true,'ya existe un usuario con ese email'],
-        lowercase:true
+        uppercase:true,
+        minLength: [2, "Debe tener al menos 2 caracteres"],
+        maxLength: [30, "Debe tener como máximo 30 caracteres"],
+        required: [true, "El nombre es requerido"],
     },
-    password:{
+    apellido: {
         type: String,
-        required: [true,"contraseña obligatoria"],
-        trim: true,
-        minLength: [7,'no puede tener menos de 7 caracteres'],
-        maxLength: [150, 'no puede tener mas de 50 caracteres']
+        trim:true,
+        uppercase:true,
+        minLength: [2, "Debe tener al menos 2 caracteres"],
+        maxLength: [30, "Debe tener como máximo 30 caracteres"],
+        required: [true, "El apellido es requerido"],
     },
-    admin:{
-         type:Boolean,
-        default:false
-    }
+    email: { 
+        type: String, 
+        unique: true, 
+        trim: true, 
+        lowercase: true,
+        required: [true, "El email es requerido"],
+    },
+    foto: {
+        type: String,
+        trim: true
+    },
+    turno: {
+        type: String,
+        enum: ["mañana", "tarde", "noche"],
+        trim: true,
+        uppercase:true,
+        required: [true, "El turno es requerido"],
+    },
+    tipoDeUsuario: {
+        type: String,
+        enum: ["admin", "visualizador", "supervisor","estadística","administración"],
+        trim: true,
+        uppercase:true,
+        required: [true, "El tipo de usuario es requerido"],
+    },
+      
+    contraseña: {
+        type: String,
+        trim: true,
+        required: [true, "La contraseña es obligatoria"],
+      },
   
-},
-{
-    versionKey : false,
-    timestamps: false
-});
+  },
+  {
+    versionKey: false,
+    timestamps: false,
+  }
+);
 
 UserSchema.methods.toJSON = function () {
-    const { password, ...user } = this.toObject();
+    const { contraseña, ...user } = this.toObject();
     return user;
   };
 
