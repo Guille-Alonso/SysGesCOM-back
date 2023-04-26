@@ -18,6 +18,45 @@ const getUsers = async (req, res) => {
   }
 };
 
+const getAuthStatus = async (req, res) => {
+  try {
+    const id = req.id;
+   
+    const user = await User.findById(id);
+    if (!user) throw new CustomError("Autenticación fallida", 401);
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(error.code || 500).json({
+      message:
+        error.message || "Ups! Hubo un problema, por favor intenta más tarde",
+    });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    const { nombreUsuario, contraseña } = req.body;
+    if (!nombreUsuario || !contraseña)
+      throw new CustomError("Usuario y contraseña son requeridas", 400);
+    const user = await User.findOne({ nombreUsuario });
+    if (!user) throw new CustomError("Usuario no encontrado", 404);
+    const passOk = await bcrypt.compare(contraseña, user.contraseña);
+    if (!passOk) throw new CustomError("Contraseña incorrecta", 400);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "3h",
+    });
+    res
+      .status(200)
+      .json({ message: "Ingreso correcto", ok: true, user, token });
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+};
+
 module.exports = {
-  getUsers
+  getUsers,
+  login,
+  getAuthStatus
 };
