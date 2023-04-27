@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsers, login, getAuthStatus } = require("../controllers/usersControllers");
+const { getUsers, login, getAuthStatus, editarConstraseña } = require("../controllers/usersControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const validateFields = require("../middlewares/validateFields");
@@ -18,5 +18,8 @@ router.post(
     ],
     login
   );
+  router.put(
+    "/editPassword", editarConstraseña
+  )
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const CustomError = require("../utils/customError");
+const bcrypt = require("bcryptjs");
 
 const getUsers = async (req, res) => {
   try {
@@ -17,6 +18,26 @@ const getUsers = async (req, res) => {
       .json({ message: error.message || "algo explotó :|" });
   }
 };
+
+const editarConstraseña = async (req, res) =>{
+  try {
+    const {password, confirmPassword, confirmPasswordRepeat, idUsuario} = req.body;
+    const Usuario = await User.findById(idUsuario);
+    const bcrypt = require("bcryptjs");
+    const passOk = await bcrypt.compare(password, Usuario.contraseña);
+    if (passOk){
+      if (confirmPassword === confirmPasswordRepeat){
+        const salt = await bcrypt.genSalt(10);
+        const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
+        await User.findByIdAndUpdate(idUsuario, {contraseña: passwordEncrypted})
+      }
+      res.status(200).json({mensaje: "Contraseña modificada con exito"})
+    }
+  } catch (error) {
+    res.status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+}
 
 const getAuthStatus = async (req, res) => {
   try {
@@ -58,5 +79,6 @@ const login = async (req, res) => {
 module.exports = {
   getUsers,
   login,
-  getAuthStatus
+  getAuthStatus,
+  editarConstraseña
 };
