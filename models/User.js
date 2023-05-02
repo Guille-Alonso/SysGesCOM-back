@@ -35,8 +35,13 @@ const UserSchema = new Schema(
         required: [true, "El email es requerido"],
     },
     foto: {
-        type: String,
-        trim: true
+      type: Buffer,
+      validate: {
+        validator: function(v) {
+          return Buffer.isBuffer(v);
+        },
+        message: "El campo 'foto' debe ser de tipo Buffer",
+      },
     },
     turno: {
         type: String,
