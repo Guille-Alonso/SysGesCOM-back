@@ -80,7 +80,7 @@ const login = async (req, res) => {
 const agregarUsuario = async (req, res) => {
   try {
     console.log(req.body);
-    const { userName, name, email, password, grupoAltaUsuarios, repeatPassword } = req.body;
+    const { userName, name, email, password, perfilAltaUsuarios, repeatPassword } = req.body;
     if (password !== repeatPassword)
       throw new CustomError("Las contraseñas no coinciden", 400);
     const salt = await bcrypt.genSalt(10);
@@ -89,7 +89,7 @@ const agregarUsuario = async (req, res) => {
       nombreUsuario: userName,
       nombre: name,
       email,
-      tipoDeUsuario: grupoAltaUsuarios.toLowerCase(),
+      tipoDeUsuario: perfilAltaUsuarios.toLowerCase(),
       contraseña: passwordEncrypted,
     });
     await user.save();
