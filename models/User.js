@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongooseUniqueValidator = require('mongoose-unique-validator');
 
 const UserSchema = new Schema(
   {
@@ -61,5 +62,9 @@ UserSchema.methods.toJSON = function () {
   const { contraseña, ...user } = this.toObject();
   return user;
 };
+
+UserSchema.plugin(mongooseUniqueValidator,{
+  message: '{PATH} debe ser único'
+  })
 
 module.exports = model('User', UserSchema)

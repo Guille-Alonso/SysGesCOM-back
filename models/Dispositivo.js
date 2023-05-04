@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const mongooseUniqueValidator = require('mongoose-unique-validator');
 
 const DispositivoSchema = new Schema(
     {
@@ -30,5 +31,9 @@ const DispositivoSchema = new Schema(
         timestamps: false,
     }
 );
+
+DispositivoSchema.plugin(mongooseUniqueValidator,{
+    message: '{PATH} debe ser único'
+    })  
 
 module.exports = model('Dispositivo', DispositivoSchema);

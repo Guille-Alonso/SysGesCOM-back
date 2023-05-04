@@ -95,23 +95,10 @@ const agregarUsuario = async (req, res) => {
     await user.save();
     res.status(200).json({ message: "Usuario creado con exito" });
   } catch (error) {
-    if (error.code === 11000) {
-      let msg = '';
-      console.log(error.message);
-      if (error.message.includes('email') && error.message.includes('nombreUsuario')) {
-        msg = 'El correo electrónico y el nombre de usuario ingresados ya existe';
-      } else if (error.message.includes('email')) {
-        msg = 'El correo electrónico ingresado ya existe';
-      } else if (error.message.includes('nombreUsuario')) {
-        msg = 'El nombre de usuario ingresado ya existe';
-      };
-      res.status(409).json({ message: msg || "algo explotó :(" });
-    } else {
       res
         .status(error.code || 500)
         .json({ message: error.message || "algo explotó :(" });
     }
-  }
 }
 
 module.exports = {

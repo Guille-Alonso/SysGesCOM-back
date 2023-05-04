@@ -1,4 +1,5 @@
 const {Schema,model} = require('mongoose');
+const mongooseUniqueValidator = require('mongoose-unique-validator');
 
 const NaturalezaEventoSchema = new Schema(
     {
@@ -17,5 +18,9 @@ const NaturalezaEventoSchema = new Schema(
         timestamps: false,
     }
 );
+
+NaturalezaEventoSchema.plugin(mongooseUniqueValidator,{
+    message: '{PATH} debe ser único'
+    })  
 
 module.exports = model('NaturalezaEvento',NaturalezaEventoSchema);
