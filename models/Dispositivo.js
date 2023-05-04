@@ -1,4 +1,4 @@
-const {Schema,model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 const DispositivoSchema = new Schema(
     {
@@ -6,12 +6,11 @@ const DispositivoSchema = new Schema(
             type: String,
             unique: true,
             trim: true,
-            uppercase:true,
             minLength: [6, "Debe tener al menos 6 caracteres"],
             maxLength: [7, "Debe tener como máximo 7 caracteres"],
             required: [true, "El nombre es requerido"],
         },
-        ubicacion:{
+        ubicacion: {
             type: String,
             trim: true,
             lowercase: true,
@@ -19,11 +18,10 @@ const DispositivoSchema = new Schema(
             maxLength: [30, "Debe tener como máximo 30 caracteres"],
             required: [true, "La ubicación es requerida"],
         },
-        tipo:{
+        tipo: {
             type: String,
-            enum: ["camara","domo"],
+            enum: ["camara", "domo"],
             trim: true,
-            uppercase:true,
             required: [true, "El tipo de cámara es requerido"],
         },
     },
@@ -33,4 +31,4 @@ const DispositivoSchema = new Schema(
     }
 );
 
-module.exports = model('Dispositivo',DispositivoSchema);
+module.exports = model('Dispositivo', DispositivoSchema);
