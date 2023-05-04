@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const CustomError = require("../utils/customError");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res) => {
   try {
@@ -19,30 +20,30 @@ const getUsers = async (req, res) => {
   }
 };
 
-const editarConstraseña = async (req, res) =>{
+const editarConstraseña = async (req, res) => {
   try {
-    const {password, confirmPassword, confirmPasswordRepeat, idUsuario} = req.body;
+    const { password, confirmPassword, confirmPasswordRepeat, idUsuario } = req.body;
     const Usuario = await User.findById(idUsuario);
     const bcrypt = require("bcryptjs");
     const passOk = await bcrypt.compare(password, Usuario.contraseña);
-    if (passOk){
-      if (confirmPassword === confirmPasswordRepeat){
+    if (passOk) {
+      if (confirmPassword === confirmPasswordRepeat) {
         const salt = await bcrypt.genSalt(10);
         const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
-        await User.findByIdAndUpdate(idUsuario, {contraseña: passwordEncrypted})
+        await User.findByIdAndUpdate(idUsuario, { contraseña: passwordEncrypted })
       }
-      res.status(200).json({mensaje: "Contraseña modificada con exito"})
+      res.status(200).json({ mensaje: "Contraseña modificada con exito" })
     }
   } catch (error) {
     res.status(error.code || 500)
-    .json({ message: error.message || "algo explotó :|" });
+      .json({ message: error.message || "algo explotó :|" });
   }
 }
 
 const getAuthStatus = async (req, res) => {
   try {
     const id = req.id;
-   
+
     const user = await User.findById(id);
     if (!user) throw new CustomError("Autenticación fallida", 401);
     res.status(200).json({ user });
@@ -64,7 +65,7 @@ const login = async (req, res) => {
     const passOk = await bcrypt.compare(contraseña, user.contraseña);
     if (!passOk) throw new CustomError("Contraseña incorrecta", 400);
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "3h",
+      expiresIn: "8h",
     });
     res
       .status(200)
@@ -76,9 +77,47 @@ const login = async (req, res) => {
   }
 };
 
+const agregarUsuario = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { userName, name, email, password, grupoAltaUsuarios, repeatPassword } = req.body;
+    if (password !== repeatPassword)
+      throw new CustomError("Las contraseñas no coinciden", 400);
+    const salt = await bcrypt.genSalt(10);
+    const passwordEncrypted = await bcrypt.hash(password, salt);
+    const user = new User({
+      nombreUsuario: userName,
+      nombre: name,
+      email,
+      tipoDeUsuario: grupoAltaUsuarios.toLowerCase(),
+      contraseña: passwordEncrypted,
+    });
+    await user.save();
+    res.status(200).json({ message: "Usuario creado con exito" });
+  } catch (error) {
+    if (error.code === 11000) {
+      let msg = '';
+      console.log(error.message);
+      if (error.message.includes('email') && error.message.includes('nombreUsuario')) {
+        msg = 'El correo electrónico y el nombre de usuario ingresados ya existe';
+      } else if (error.message.includes('email')) {
+        msg = 'El correo electrónico ingresado ya existe';
+      } else if (error.message.includes('nombreUsuario')) {
+        msg = 'El nombre de usuario ingresado ya existe';
+      };
+      res.status(409).json({ message: msg || "algo explotó :(" });
+    } else {
+      res
+        .status(error.code || 500)
+        .json({ message: error.message || "algo explotó :(" });
+    }
+  }
+}
+
 module.exports = {
   getUsers,
   login,
   getAuthStatus,
-  editarConstraseña
+  editarConstraseña,
+  agregarUsuario
 };
