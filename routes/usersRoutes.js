@@ -24,11 +24,11 @@ router.put(
 
 router.post("/alta",
   [
-    check("userName").not().isEmpty().isLength({ min: 4, max: 20 }),
-    check("name").not().isEmpty().isLength({ min: 2, max: 30 }),
+    check("userName", "El usuario no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 20 }),
+    check("name", "El nombre no cumple los requisitos").not().isEmpty().isLength({ min: 2, max: 30 }),
     check("email", "Formato de email invalido").not().isEmpty().isEmail(),
-    check("password").not().isEmpty(),
-    check("grupoAltaUsuarios", "Ingrese un grupo valido").not().isEmpty().isString().isIn(["admin", "visualizador", "supervisor", "estadística", "administración"]),
+    check("password", "La contraseña no cumple los requisitos").not().isEmpty(),
+    check("perfilAltaUsuarios", "Debe ingresar un grupo valido").not().isEmpty().isString().isIn(["admin", "visualizador", "supervisor", "estadística", "administración"]),
     validateFields,
   ],
   agregarUsuario
