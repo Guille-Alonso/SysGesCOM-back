@@ -36,7 +36,7 @@ const UserSchema = new Schema(
       enum: ["mañana", "tarde", "noche"],
       trim: true,
       uppercase: true,
-      // required: [true, "El turno es requerido"],
+      required: [true, "El turno es requerido"],
     },
     tipoDeUsuario: {
       type: String,
