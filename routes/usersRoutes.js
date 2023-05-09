@@ -7,7 +7,7 @@ const { check } = require("express-validator");
 
 const router = Router();
 
-router.get("/email/:email?", verifyRole, getUsers)
+router.get("/email/:email?", getUsers)
 router.get("/authStatus", auth, getAuthStatus);
 router.post(
   "/login",
