@@ -19,6 +19,24 @@ const agregarCamara = async (req, res) => {
   }
 };
 
+const getCamara = async (req, res) => {
+  try {
+    if (req.params.nombre) {
+      const camara = await Dispositivo.findOne({ nombre: req.params.nombre });
+      if (!camara) throw new CustomError("Camara no encontrada", 404);
+      res.status(200).json({ camara });
+    } else {
+      const camaras = await Dispositivo.find();
+      res.status(200).json({ camaras });
+    }
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+};
+
 module.exports = {
-  agregarCamara
+  agregarCamara,
+  getCamara
 }

@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { agregarCamara } = require("../controllers/camarasControllers");
+const { agregarCamara, getCamara } = require("../controllers/camarasControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
@@ -12,5 +12,7 @@ router.post("/alta", [auth, verifyRole,
     check("tipoDeCamara", "el valor ingresado no es correcto").not().isEmpty().isString().isIn(["camara", "domo"]),
     validateFields
 ], agregarCamara);
+
+router.get("/listar/:nomlbre?", getCamara);
 
 module.exports = router;
