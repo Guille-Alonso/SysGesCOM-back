@@ -13,6 +13,6 @@ router.post("/alta", [auth, verifyRole,
     validateFields
 ], agregarCamara);
 
-router.get("/listar/:nomlbre?", getCamara);
+router.get("/listar/:nombre?", getCamara);
 
 module.exports = router;

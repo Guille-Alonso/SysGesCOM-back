@@ -24,16 +24,15 @@ const editarConstraseña = async (req, res) => {
   try {
     const { password, confirmPassword, confirmPasswordRepeat, idUsuario } = req.body;
     const Usuario = await User.findById(idUsuario);
-    const bcrypt = require("bcryptjs");
     const passOk = await bcrypt.compare(password, Usuario.contraseña);
     if (passOk) {
       if (confirmPassword === confirmPasswordRepeat) {
         const salt = await bcrypt.genSalt(10);
         const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
         await User.findByIdAndUpdate(idUsuario, { contraseña: passwordEncrypted })
-      }
+      }else  res.status(400).json({ mensaje: "Las contraseñas no coinciden" })
       res.status(200).json({ mensaje: "Contraseña modificada con exito" })
-    }
+    }else res.status(400).json({ mensaje: "Contraseña actual incorrecta" })
   } catch (error) {
     res.status(error.code || 500)
       .json({ message: error.message || "algo explotó :|" });
