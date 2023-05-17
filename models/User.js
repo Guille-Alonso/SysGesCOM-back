@@ -37,7 +37,7 @@ const UserSchema = new Schema(
       default: true,
     },
     dni: {
-      type: Boolean,
+      type: Number,
       unique: true,
     },
     nacimiento: {
