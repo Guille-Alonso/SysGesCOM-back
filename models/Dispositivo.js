@@ -25,6 +25,10 @@ const DispositivoSchema = new Schema(
             trim: true,
             required: [true, "El tipo de cámara es requerido"],
         },
+        estado:{//borrado logico
+            type: Boolean,
+            default: true
+        },
     },
     {
         versionKey: false,

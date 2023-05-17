@@ -38,6 +38,10 @@ const ReporteSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Subcategoria",
         },
+        dispositivo:{
+            type: Schema.Types.ObjectId,
+            ref: "Dispositivo",
+        },
     },
     {
         versionKey: false,
