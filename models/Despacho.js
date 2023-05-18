@@ -11,6 +11,10 @@ const DespachoSchema = new Schema(
             required: [true, "El acuse es requerido"],
             trim: true,
         },
+        estado:{//borrado logico
+            type: Boolean,
+            default: true
+        },
         reporte:{
             type: Schema.Types.ObjectId,
             ref: "Reporte",

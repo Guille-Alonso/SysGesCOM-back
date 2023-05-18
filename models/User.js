@@ -29,7 +29,23 @@ const UserSchema = new Schema(
     },
     foto: {
       type: String,
-      trim: true
+      trim: true,
+    },
+    estado: {
+      //borrado logico
+      type: Boolean,
+      default: true,
+    },
+    dni: {
+      type: Number,
+      unique: true,
+    },
+    nacimiento: {
+      type: String,
+    },
+    afiliado: {
+      type: Number,
+      unique: true,
     },
     estado: { 
       type: Boolean,
@@ -54,7 +70,13 @@ const UserSchema = new Schema(
     },
     tipoDeUsuario: {
       type: String,
-      enum: ["admin", "visualizador", "supervisor", "estadística", "administración"],
+      enum: [
+        "admin",
+        "visualizador",
+        "supervisor",
+        "estadística",
+        "administración",
+      ],
       trim: true,
       required: [true, "El tipo de usuario es requerido"],
     },
@@ -64,7 +86,6 @@ const UserSchema = new Schema(
       trim: true,
       required: [true, "La contraseña es obligatoria"],
     },
-
   },
   {
     versionKey: false,
