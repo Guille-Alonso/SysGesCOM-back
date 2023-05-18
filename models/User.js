@@ -47,6 +47,21 @@ const UserSchema = new Schema(
       type: Number,
       unique: true,
     },
+    estado: { 
+      type: Boolean,
+      default: true,
+    },
+    dni: {
+      type: Number,
+      default: true,
+    },
+    nacimiento: {
+      type: Date,
+    },
+    afiliado: {
+      type: Number,
+      unique: true,
+    },
     turno: {
       type: String,
       enum: ["mañana", "tarde", "noche"],
