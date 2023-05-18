@@ -26,6 +26,8 @@ router.post("/alta",
   [
     check("userName", "El usuario no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 20 }),
     check("name", "El nombre no cumple los requisitos").not().isEmpty().isLength({ min: 2, max: 30 }),
+    check("dni", "El dni debe ser numérico").not().isEmpty().isLength(8),
+    check("afiliado", "El afiliado no cumple los requisitos").not().isEmpty().isLength(5),
     check("email", "Formato de email invalido").not().isEmpty().isEmail(),
     check("password", "La contraseña no cumple los requisitos").not().isEmpty(),
     check("perfilAltaUsuarios", "Debe ingresar un grupo valido").not().isEmpty().isString().isIn(["admin", "visualizador", "supervisor", "estadística", "administración"]),
