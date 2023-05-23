@@ -3,6 +3,27 @@ const CustomError = require("../utils/customError");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+
+const actualizarUser =
+  async (req, res) => {
+    // Actualizar un usuario por su ID
+    try {
+      const { id } = req.params;
+      const updatedUser = req.body; // Los datos actualizados del usuario
+      console.log(req.params)
+      console.log(updatedUser)
+      // Encuentra y actualiza el usuario en la base de datos
+      const user = await User.findByIdAndUpdate(id, updatedUser, { new: true });
+
+      res.json(user);
+    } catch (error) {
+      console.error('Error al actualizar el usuario:', error);
+      res.status(500).json({ error: 'Error al actualizar el usuario' });
+    }
+  }
+
+
+
 const getUsers = async (req, res) => {
   try {
     if (req.params.email) {
@@ -30,9 +51,9 @@ const editarConstraseña = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
         await User.findByIdAndUpdate(idUsuario, { contraseña: passwordEncrypted })
-      }else  res.status(400).json({ mensaje: "Las contraseñas no coinciden" })
+      } else res.status(400).json({ mensaje: "Las contraseñas no coinciden" })
       res.status(200).json({ mensaje: "Contraseña modificada con exito" })
-    }else res.status(400).json({ mensaje: "Contraseña actual incorrecta" })
+    } else res.status(400).json({ mensaje: "Contraseña actual incorrecta" })
   } catch (error) {
     res.status(error.code || 500)
       .json({ message: error.message || "algo explotó :|" });
@@ -96,15 +117,15 @@ const agregarUsuario = async (req, res) => {
       turno,
       tipoDeUsuario: perfilAltaUsuarios.toLowerCase(),
       contraseña: passwordEncrypted,
-      foto:photo,
+      foto: photo,
     });
     await user.save();
     res.status(200).json({ message: "Usuario creado con exito" });
   } catch (error) {
-      res
-        .status(error.code || 500)
-        .json({ message: error.message || "algo explotó :(" });
-    }
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :(" });
+  }
 }
 
 module.exports = {
@@ -112,5 +133,6 @@ module.exports = {
   login,
   getAuthStatus,
   editarConstraseña,
-  agregarUsuario
+  agregarUsuario,
+  actualizarUser
 };
