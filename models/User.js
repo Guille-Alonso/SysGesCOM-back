@@ -37,14 +37,14 @@ const UserSchema = new Schema(
       default: true,
     },
     dni: {
-      type: Number,
+      type: String,
       unique: true,
     },
     nacimiento: {
       type: String,
     },
     afiliado: {
-      type: Number,
+      type: String,
       unique: true,
     },
     turno: {
