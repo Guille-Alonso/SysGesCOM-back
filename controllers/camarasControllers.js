@@ -1,4 +1,5 @@
 const Dispositivo = require("../models/Dispositivo");
+const CustomError = require("../utils/customError");
 
 const agregarCamara = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ const getCamara = async (req, res) => {
       if (!camara) throw new CustomError("Camara no encontrada", 404);
       res.status(200).json({ camara });
     } else {
-      const camaras = await Dispositivo.find();
+      const camaras = await Dispositivo.find({estado:true});
       res.status(200).json({ camaras });
     }
   } catch (error) {
@@ -36,7 +37,42 @@ const getCamara = async (req, res) => {
   }
 };
 
+const actualizarCamara =
+  async (req, res) => {
+    // Actualizar una camara por su ID
+    try {
+      const { id } = req.params;
+      const updatedCamera = req.body; // Los datos actualizados del usuario
+    
+      // Encuentra y actualiza el usuario en la base de datos
+      const camara = await Dispositivo.findByIdAndUpdate(id, updatedCamera, { new: true });
+      if(!camara) throw new CustomError("camara no encontrada",404)
+      res.status(200).json({message:"camara modificada con exito",camara});
+    } catch (error) {
+      console.error('Error al actualizar la camara:', error);
+      res.status(500).json({ error: 'Error al actualizar la camara' });
+    }
+  }
+
+  const borrarCamara = async (req,res)=>{
+    try {
+      const { id } = req.body;
+      const cameraRemove = {
+        estado:false
+      }
+      const camaraEliminada = await Dispositivo.findByIdAndUpdate(id,cameraRemove,{new:true})
+      if(!camaraEliminada) throw new CustomError("cámara no encontrada",404)
+      res.status(200).json({message:"Cámara eliminada con éxito"})
+    } catch (error) {
+      res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+    }
+  }
+
 module.exports = {
   agregarCamara,
-  getCamara
+  getCamara,
+  actualizarCamara,
+  borrarCamara
 }

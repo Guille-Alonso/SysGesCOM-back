@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { agregarCamara, getCamara } = require("../controllers/camarasControllers");
+const { agregarCamara, getCamara, actualizarCamara, borrarCamara } = require("../controllers/camarasControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
@@ -14,5 +14,14 @@ router.post("/alta", [auth, verifyRole,
 ], agregarCamara);
 
 router.get("/listar/:nombre?", getCamara);
+router.put("/actualizarCamara/:id", actualizarCamara);
+router.delete(
+    "/",
+    [
+      check("id").not().isEmpty().isMongoId(),
+      validateFields,
+    ],
+    borrarCamara
+  );
 
 module.exports = router;

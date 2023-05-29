@@ -3,7 +3,6 @@ const CustomError = require("../utils/customError");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-
 const actualizarUser =
   async (req, res) => {
     // Actualizar un usuario por su ID
@@ -14,15 +13,13 @@ const actualizarUser =
       console.log(updatedUser)
       // Encuentra y actualiza el usuario en la base de datos
       const user = await User.findByIdAndUpdate(id, updatedUser, { new: true });
-
-      res.json(user);
+      if(!user) throw new CustomError("usuario no encontrado",404)
+      res.status(200).json({message:"usuario modificado con exito",user});
     } catch (error) {
       console.error('Error al actualizar el usuario:', error);
       res.status(500).json({ error: 'Error al actualizar el usuario' });
     }
   }
-
-
 
 const getUsers = async (req, res) => {
   try {
@@ -31,7 +28,7 @@ const getUsers = async (req, res) => {
       if (!user) throw new CustomError("Usuario no encontrado", 404);
       res.status(200).json({ user });
     } else {
-      const users = await User.find();
+      const users = await User.find({estado:true});
       res.status(200).json({ users });
     }
   } catch (error) {
@@ -128,11 +125,28 @@ const agregarUsuario = async (req, res) => {
   }
 }
 
+const borrarUsuario = async (req,res)=>{
+  try {
+    const { id } = req.body;
+    const userRemove = {
+      estado:false
+    }
+    const usuarioEliminado = await User.findByIdAndUpdate(id,userRemove,{new:true})
+    if(!usuarioEliminado) throw new CustomError("usuario no encontrado",404)
+    res.status(200).json({message:"Usuario eliminado con éxito"})
+  } catch (error) {
+    res
+    .status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+}
+
 module.exports = {
   getUsers,
   login,
   getAuthStatus,
   editarConstraseña,
   agregarUsuario,
-  actualizarUser
+  actualizarUser,
+  borrarUsuario
 };

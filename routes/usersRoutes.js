@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser } = require("../controllers/usersControllers");
+const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario } = require("../controllers/usersControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const validateFields = require("../middlewares/validateFields");
@@ -37,6 +37,15 @@ router.post("/alta",
     validateFields,
   ],
   agregarUsuario
-)
+);
+
+router.delete(
+  "/",
+  [
+    check("id").not().isEmpty().isMongoId(),
+    validateFields,
+  ],
+  borrarUsuario
+);
 
 module.exports = router;
