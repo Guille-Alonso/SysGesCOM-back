@@ -45,12 +45,25 @@ const actualizarCamara =
       const updatedCamera = req.body; // Los datos actualizados del usuario
     
       // Encuentra y actualiza el usuario en la base de datos
-      const camara = await Dispositivo.findByIdAndUpdate(id, updatedCamera, { new: true });
+      const camara = await Dispositivo.findByIdAndUpdate(id, updatedCamera, { new: true,runValidators: true });
       if(!camara) throw new CustomError("camara no encontrada",404)
       res.status(200).json({message:"camara modificada con exito",camara});
     } catch (error) {
-      console.error('Error al actualizar la camara:', error);
-      res.status(500).json({ error: 'Error al actualizar la camara' });
+      if (error.name === 'ValidationError') {
+        // Si el error es una validación de Mongoose
+        const errors = Object.values(error.errors).map(err => err.message);
+        let errorMje = "";
+        for (let index = 0; index < errors.length; index++) {
+          errorMje = errorMje + '-' + errors[index]
+          
+        }
+        console.log(errorMje);
+        res.status(400).json({ errorMje });
+      } else {
+        // Otro tipo de error
+        res.status(500).json({ error: 'Error al actualizar el dispositivo' });
+      }
+    
     }
   }
 

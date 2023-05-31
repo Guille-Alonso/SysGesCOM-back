@@ -9,15 +9,29 @@ const actualizarUser =
     try {
       const { id } = req.params;
       const updatedUser = req.body; // Los datos actualizados del usuario
-      console.log(req.params)
+      // console.log(req.params)
       console.log(updatedUser)
       // Encuentra y actualiza el usuario en la base de datos
-      const user = await User.findByIdAndUpdate(id, updatedUser, { new: true });
+      const user = await User.findByIdAndUpdate(id, updatedUser, { new: true,runValidators: true});
       if(!user) throw new CustomError("usuario no encontrado",404)
       res.status(200).json({message:"usuario modificado con exito",user});
     } catch (error) {
-      console.error('Error al actualizar el usuario:', error);
-      res.status(500).json({ error: 'Error al actualizar el usuario' });
+      // console.error('Error al actualizar el usuario:', error);
+      if (error.name === 'ValidationError') {
+        // Si el error es una validación de Mongoose
+        const errors = Object.values(error.errors).map(err => err.message);
+        let errorMje = "";
+        for (let index = 0; index < errors.length; index++) {
+          errorMje = errorMje + '-' + errors[index]
+          
+        }
+        console.log(errorMje);
+        res.status(400).json({ errorMje });
+      } else {
+        // Otro tipo de error
+        res.status(500).json({ error: 'Error al actualizar el usuario' });
+      }
+    
     }
   }
 
