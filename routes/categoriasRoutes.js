@@ -3,7 +3,7 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarCategoria } = require("../controllers/categoriasControllers");
+const { agregarCategoria, getCategorias } = require("../controllers/categoriasControllers");
 
 const router = Router();
 
@@ -12,5 +12,7 @@ router.post("/alta", [
     check("naturaleza").not().isEmpty().isMongoId(),
     validateFields
 ], agregarCategoria);
+
+router.get("/listar/:nombre?", getCategorias)
 
 module.exports = router;

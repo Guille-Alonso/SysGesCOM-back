@@ -21,7 +21,25 @@ const agregarCategoria= async (req, res) => {
   }
 };
 
+const getCategorias = async (req, res) => {
+  try {
+    if (req.params.nombre) {
+      const categoria = await Categoria.findOne({ nombre: req.params.nombre });
+      if (!categoria) throw new CustomError("Categoria no encontrada", 404);
+      res.status(200).json({ naturaleza });
+    } else {
+      const categorias = await Categoria.find();
+      res.status(200).json({ categorias });
+    }
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+};
+
 module.exports = {
-    agregarCategoria
+    agregarCategoria,
+    getCategorias
   }
   
