@@ -6,6 +6,9 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const usersRoutes = require('./routes/usersRoutes')
 const camarasRoutes = require('./routes/camarasRoutes')
+const naturalezaEventosRoutes = require('./routes/naturalezaEventoRoutes')
+const categoriasRoutes = require('./routes/categoriasRoutes')
+const subcategoriasRoutes = require('./routes/subcategoriasRoutes')
 
 const app = express();
 app.use(cors()); 
@@ -20,5 +23,8 @@ app.use(express.urlencoded({extended:true}))
 
 app.use('/users',usersRoutes)
 app.use('/camaras',camarasRoutes)
+app.use('/naturaleza',naturalezaEventosRoutes)
+app.use('/categorias',categoriasRoutes)
+app.use('/subcategorias',subcategoriasRoutes)
 
 app.listen(PORT,()=>{console.log(`server listening on port ${PORT}`)})
