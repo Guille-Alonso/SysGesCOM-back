@@ -3,7 +3,7 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarSubcategoria, getSubcategorias } = require("../controllers/subcategoriasControllers");
+const { agregarSubcategoria, getSubcategorias, borrarSubcategoria, actualizarSubcategoria } = require("../controllers/subcategoriasControllers");
 
 const router = Router();
 
@@ -14,5 +14,16 @@ router.post("/alta", [
 ], agregarSubcategoria);
 
 router.get("/listar/:nombre?", getSubcategorias)
+
+router.put("/actualizarSubcategoria/:id", actualizarSubcategoria);
+
+router.delete(
+    "/",
+    [
+      check("id").not().isEmpty().isMongoId(),
+      validateFields,
+    ],
+    borrarSubcategoria
+  );
 
 module.exports = router;

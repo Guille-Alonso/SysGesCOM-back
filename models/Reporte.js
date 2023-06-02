@@ -19,7 +19,7 @@ const ReporteSchema = new Schema(
         rutaImagen: {//imagenes/nombreUsuario1 el nombre de la img deberia ser nombre+fecha
            type: Array
           },
-        naturaleza:{
+        naturaleza:{//quizá no haga falta pq categoría ya la indica..
             type: Schema.Types.ObjectId,
             ref: "NaturalezaEvento",
             required: [true, "El tipo de evento es requerido"],

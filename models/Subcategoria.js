@@ -12,6 +12,10 @@ const SubcategoriaSchema = new Schema(
             maxLength: [20, "Debe tener como máximo 20 caracteres"],
             required: [true, "El nombre es requerido"],
         },
+        estado:{//borrado logico
+            type: Boolean,
+            default: true
+        },
         categoria:{
             type: Schema.Types.ObjectId,
             ref: "Categoria",

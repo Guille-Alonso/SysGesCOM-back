@@ -3,7 +3,7 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarCategoria, getCategorias } = require("../controllers/categoriasControllers");
+const { agregarCategoria, getCategorias, borrarCategoria, actualizarCategoria } = require("../controllers/categoriasControllers");
 
 const router = Router();
 
@@ -14,5 +14,16 @@ router.post("/alta", [
 ], agregarCategoria);
 
 router.get("/listar/:nombre?", getCategorias)
+
+router.put("/actualizarCategoria/:id", actualizarCategoria);
+
+router.delete(
+    "/",
+    [
+      check("id").not().isEmpty().isMongoId(),
+      validateFields,
+    ],
+    borrarCategoria
+  );
 
 module.exports = router;
