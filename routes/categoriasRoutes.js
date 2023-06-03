@@ -8,9 +8,9 @@ const { agregarCategoria, getCategorias, borrarCategoria, actualizarCategoria } 
 const router = Router();
 
 router.post("/alta", [
-    check("nombre", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 20 }),
-    check("naturaleza").not().isEmpty().isMongoId(),
-    validateFields
+  check("categoria", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 20 }),
+  check("naturaleza").not().isEmpty().isMongoId(),
+  validateFields
 ], agregarCategoria);
 
 router.get("/listar/:nombre?", getCategorias)
@@ -18,12 +18,12 @@ router.get("/listar/:nombre?", getCategorias)
 router.put("/actualizarCategoria/:id", actualizarCategoria);
 
 router.delete(
-    "/",
-    [
-      check("id").not().isEmpty().isMongoId(),
-      validateFields,
-    ],
-    borrarCategoria
-  );
+  "/",
+  [
+    check("id").not().isEmpty().isMongoId(),
+    validateFields,
+  ],
+  borrarCategoria
+);
 
 module.exports = router;
