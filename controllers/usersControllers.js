@@ -54,17 +54,16 @@ const getUsers = async (req, res) => {
 
 const editarConstraseña = async (req, res) => {
   try {
-    const {confirmPassword, confirmPasswordRepeat, idUsuario } = req.body;
-    // const Usuario = await User.findById(idUsuario);
-    // const passOk = await bcrypt.compare(password, Usuario.contraseña);
-    // if (passOk) {
+    const {confirmPassword, confirmPasswordRepeat, userName } = req.body;
+    const user = await User.findOne({nombreUsuario:userName});
+    if (user) {
       if (confirmPassword === confirmPasswordRepeat) {
         const salt = await bcrypt.genSalt(10);
         const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
-        await User.findByIdAndUpdate(idUsuario, { contraseña: passwordEncrypted })
+        await User.findByIdAndUpdate(user._id, { contraseña: passwordEncrypted })
       } else res.status(400).json({ mensaje: "Las contraseñas no coinciden" })
       res.status(200).json({ mensaje: "Contraseña modificada con exito" })
-    // } else res.status(400).json({ mensaje: "Contraseña actual incorrecta" })
+    } else res.status(400).json({ mensaje: "Usuario no encontrado" })
   } catch (error) {
     res.status(error.code || 500)
       .json({ message: error.message || "algo explotó :|" });
