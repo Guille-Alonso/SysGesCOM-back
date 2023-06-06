@@ -23,10 +23,10 @@ const agregarSubcategoria= async (req, res) => {
 
 const getSubcategorias = async (req, res) => {
   try {
-    if (req.params.nombre) {
-      const subcategoria = await Subcategoria.findOne({ nombre: req.params.nombre });
-      if (!subcategoria) throw new CustomError("Subcategoria no encontrada", 404);
-      res.status(200).json({ subcategoria });
+    if (req.params.idCat) {
+      const subcategorias = await Subcategoria.find({ categoria: req.params.idCat , estado:true}).populate("categoria");
+      if (!subcategorias) throw new CustomError("Categoria no encontrada", 404);
+      res.status(200).json({ subcategorias });
     } else {
       const subcategorias = await Subcategoria.find({estado:true});
       res.status(200).json({ subcategorias });

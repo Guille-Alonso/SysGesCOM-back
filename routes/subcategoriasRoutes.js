@@ -13,7 +13,7 @@ router.post("/alta", [
     validateFields
 ], agregarSubcategoria);
 
-router.get("/listar/:nombre?", getSubcategorias)
+router.get("/listar/:idCat?", getSubcategorias)
 
 router.put("/actualizarSubcategoria/:id", actualizarSubcategoria);
 
