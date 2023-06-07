@@ -21,7 +21,9 @@ const DespachoSchema = new Schema(
             required: [true, "El reporte es requerido"],
         },
         reparticion:{
-            type: Array
+            type: Schema.Types.ObjectId,
+            ref: "Reparticion",
+            required: [true, "La repartición es requerida"],
         },
     },
     {
