@@ -7,6 +7,7 @@ const DispositivoSchema = new Schema(
             type: String,
             unique: true,
             trim: true,
+            uppercase:true,
             minLength: [6, "Debe tener al menos 6 caracteres"],
             maxLength: [7, "Debe tener como máximo 7 caracteres"],
             required: [true, "El nombre es requerido"],
