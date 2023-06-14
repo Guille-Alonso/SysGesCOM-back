@@ -7,7 +7,7 @@ const { check } = require("express-validator");
 
 const router = Router();
 
-router.get("/email/:email?", getUsers)
+router.get("/email/:email?",auth,verifyRole, getUsers)
 router.get("/authStatus", auth, getAuthStatus);
 router.post(
   "/login",
@@ -19,12 +19,12 @@ router.post(
   login
 );
 router.put(
-  "/editPassword", editarConstraseña
+  "/editPassword",auth,verifyRole, editarConstraseña
 )
-router.put("/actualizarUsuario/:id", actualizarUser);
+router.put("/actualizarUsuario/:id",auth,verifyRole, actualizarUser);
 
 router.post("/alta",
-  [
+  [ auth,verifyRole,
     check("userName", "El usuario no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 20 }),
     check("name", "El nombre no cumple los requisitos").not().isEmpty().isLength({ min: 2, max: 30 }),
     check("dni", "El dni debe ser numérico").not().isEmpty().isLength({ max: 8 }),
@@ -41,7 +41,7 @@ router.post("/alta",
 
 router.delete(
   "/",
-  [
+  [auth,verifyRole,
     check("id").not().isEmpty().isMongoId(),
     validateFields,
   ],

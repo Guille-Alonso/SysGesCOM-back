@@ -7,19 +7,19 @@ const { agregarCategoria, getCategorias, borrarCategoria, actualizarCategoria } 
 
 const router = Router();
 
-router.post("/alta", [
+router.post("/alta", [auth,verifyRole,
   check("categoria", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 20 }),
   check("naturaleza").not().isEmpty().isMongoId(),
   validateFields
 ], agregarCategoria);
 
-router.get("/listar/:nombre?", getCategorias)
+router.get("/listar/:nombre?",auth, getCategorias)
 
-router.put("/actualizarCategoria/:id", actualizarCategoria);
+router.put("/actualizarCategoria/:id",auth,verifyRole, actualizarCategoria);
 
 router.delete(
   "/",
-  [
+  [ auth,verifyRole,
     check("id").not().isEmpty().isMongoId(),
     validateFields,
   ],

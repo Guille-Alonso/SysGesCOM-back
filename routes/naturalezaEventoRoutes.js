@@ -7,11 +7,11 @@ const { agregarNaturalezaEvento, getNaturaleza } = require("../controllers/Natur
 
 const router = Router();
 
-router.post("/alta", [
+router.post("/alta", [ auth,verifyRole,
     check("nombre", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 20 }),
     validateFields
 ], agregarNaturalezaEvento);
 
-router.get("/listar/:nombre?", getNaturaleza)
+router.get("/listar/:nombre?",auth, getNaturaleza)
 
 module.exports = router;
