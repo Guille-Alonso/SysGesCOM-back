@@ -17,7 +17,8 @@ const ReporteSchema = new Schema(
             default: true
         },
         rutaImagen: {//imagenes/nombreUsuario1 el nombre de la img deberia ser nombre+fecha
-           type: Array
+            type: String,
+            trim: true,
           },
         naturaleza:{//quizá no haga falta pq categoría ya la indica..
             type: Schema.Types.ObjectId,
