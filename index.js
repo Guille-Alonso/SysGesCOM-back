@@ -9,6 +9,7 @@ const camarasRoutes = require('./routes/camarasRoutes')
 const naturalezaEventosRoutes = require('./routes/naturalezaEventoRoutes')
 const categoriasRoutes = require('./routes/categoriasRoutes')
 const subcategoriasRoutes = require('./routes/subcategoriasRoutes')
+const reportesRoutes = require('./routes/reportesRoutes')
 
 const app = express();
 app.use(cors()); 
@@ -26,5 +27,6 @@ app.use('/camaras',camarasRoutes)
 app.use('/naturaleza',naturalezaEventosRoutes)
 app.use('/categorias',categoriasRoutes)
 app.use('/subcategorias',subcategoriasRoutes)
+app.use('/reportes',reportesRoutes)
 
 app.listen(PORT,()=>{console.log(`server listening on port ${PORT}`)})

@@ -3,7 +3,7 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarNaturalezaEvento, getNaturaleza } = require("../controllers/NaturalezaEventoControllers");
+const { agregarNaturalezaEvento, getNaturaleza, getDatos } = require("../controllers/NaturalezaEventoControllers");
 
 const router = Router();
 
@@ -13,5 +13,6 @@ router.post("/alta", [ auth,verifyRole,
 ], agregarNaturalezaEvento);
 
 router.get("/listar/:nombre?",auth, getNaturaleza)
+router.get("/listarClasificacion",auth, getDatos)
 
 module.exports = router;

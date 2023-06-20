@@ -14,6 +14,7 @@ router.post("/alta", [auth,verifyRole,
 ], agregarSubcategoria);
 
 router.get("/listar/:idCat?",auth, getSubcategorias)
+// router.get("/listarConCat",auth, getSubConCat)
 
 router.put("/actualizarSubcategoria/:id",auth,verifyRole, actualizarSubcategoria);
 

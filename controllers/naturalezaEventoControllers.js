@@ -1,4 +1,6 @@
+const Categoria = require("../models/Categoria");
 const NaturalezaEvento = require("../models/NaturalezaEvento");
+const Subcategoria = require("../models/Subcategoria");
 const CustomError = require("../utils/customError");
 
 const agregarNaturalezaEvento = async (req, res) => {
@@ -37,8 +39,25 @@ const getNaturaleza = async (req, res) => {
   }
 };
 
+const getDatos = async (req, res) => {
+  try {
+    
+      const naturalezas = await NaturalezaEvento.find();
+      const categorias = await Categoria.find({estado:true}).populate("naturaleza");
+      const subcategorias = await Subcategoria.find({estado:true}).populate("categoria");
+
+      res.status(200).json({ naturalezas,categorias,subcategorias });
+    
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+};
+
 module.exports = {
   agregarNaturalezaEvento,
-  getNaturaleza
+  getNaturaleza,
+  getDatos
   }
   

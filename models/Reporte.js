@@ -16,10 +16,11 @@ const ReporteSchema = new Schema(
             type: Boolean,
             default: true
         },
-        rutaImagen: {//imagenes/nombreUsuario1 el nombre de la img deberia ser nombre+fecha
+        rutaImagen: {
             type: String,
+            required: [true, "La imagen es requerida"],
             trim: true,
-          },
+        },
         naturaleza:{//quizá no haga falta pq categoría ya la indica..
             type: Schema.Types.ObjectId,
             ref: "NaturalezaEvento",

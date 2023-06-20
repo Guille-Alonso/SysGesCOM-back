@@ -1,12 +1,15 @@
 const multer = require("multer");
+const path = require('path');
+const fs = require('fs');
 
-const funcion = (id) => {
-  try {
-    console.log(id);
-
+const funcionMulter = (user) => {
+  
     const storage = multer.diskStorage({
       destination: function (req, file, cb) {
-        cb(null, "./uploads");
+        // cb(null, `./uploads/${user.nombreUsuario}`);
+        const uploadPath = `./uploads/${user.nombreUsuario}`; // Ruta de la carpeta de destino
+        fs.mkdirSync(uploadPath, { recursive: true }); // Crear carpeta si no existe
+        cb(null, uploadPath);
       },
       filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + file.originalname);
@@ -16,11 +19,8 @@ const funcion = (id) => {
     const upload = multer({ storage: storage });
 
     return upload;
-  } catch (error) {
-    // res.status(401).json({ message: "Invalid token" });
-  }
 };
 
 module.exports = {
-  funcion,
+  funcionMulter,
 };

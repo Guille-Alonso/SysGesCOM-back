@@ -1,3 +1,4 @@
+const Categoria = require("../models/Categoria");
 const Subcategoria = require("../models/Subcategoria");
 const CustomError = require("../utils/customError");
 
@@ -37,6 +38,24 @@ const getSubcategorias = async (req, res) => {
       .json({ message: error.message || "algo explotó :|" });
   }
 };
+
+// const getSubConCat = async (req, res) => {
+//   try {
+//       const categorias = await Categoria.find({estado:true})
+//       .where('_id')
+//       .nin(await Subcategoria.distinct('categoriaId'))
+//       .exec();
+
+//       const subcategorias = await Subcategoria.find({estado:true});
+//       const mergedArray = [...subcategorias, ...categorias];
+//       res.status(200).json({ mergedArray });
+    
+//   } catch (error) {
+//     res
+//       .status(error.code || 500)
+//       .json({ message: error.message || "algo explotó :|" });
+//   }
+// };
 
 const borrarSubcategoria = async (req,res)=>{
   try {
@@ -86,6 +105,7 @@ module.exports = {
     agregarSubcategoria,
     getSubcategorias,
     borrarSubcategoria,
-    actualizarSubcategoria
+    actualizarSubcategoria,
+    // getSubConCat
   }
   
