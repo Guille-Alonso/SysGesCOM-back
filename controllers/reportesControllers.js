@@ -7,19 +7,17 @@ const agregarReporte= async (req, res) => {
   try {
     const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria} = req.body;
 
-    const folderPath = `./uploads/${userName}`;
+    const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${userName}`;
 
     fs.readdir(folderPath, async (err, files) => {
       if (err) {
         console.error('Error al leer la carpeta:', err);
         return;
       }
-    
-      // Obtener el último archivo de la lista
+ 
       const lastFile = files[files.length - 1];
       const filePath = path.join(folderPath, lastFile);
     
-
     const newReporte = new Reporte({
       fecha,
       categoria,
@@ -43,24 +41,25 @@ const agregarReporte= async (req, res) => {
   }
 };
 
-const getImages = async (req,res)=>{
+const getReportes = async (req, res) => {
   try {
-    const report = await Reporte.find(req.params.id)
-console.log(report);
-    const imagePath = path.join(__dirname,report.rutaImagen)
-
-    // Envía la imagen como respuesta
-    res.sendFile(imagePath);
+    if (req.params.id) {
+      const reporte = await Reporte.findById(req.params.id );
+      if (!reporte) throw new CustomError("Reporte no encontrado", 404);
+      res.status(200).json({ reporte });
+    } else {
+      const reportes = await Reporte.find({estado:true}).populate("naturaleza").populate("categoria").populate("subcategoria").populate("usuario").populate("dispositivo");
+      res.status(200).json({ reportes });
+    }
   } catch (error) {
     res
-    .status(error.code || 500)
-    .json({ message: error.message || "algo explotó :|" });
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
   }
- 
-}
+};
 
 module.exports = {
     agregarReporte,
-    getImages
+    getReportes
   }
   

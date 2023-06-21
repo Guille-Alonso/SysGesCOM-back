@@ -43,6 +43,7 @@ const ReporteSchema = new Schema(
         dispositivo:{
             type: Schema.Types.ObjectId,
             ref: "Dispositivo",
+            required: [true, "El dispositivo es requerido"],
         },
     },
     {

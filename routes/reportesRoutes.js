@@ -3,12 +3,12 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarReporte, getImages } = require("../controllers/reportesControllers");
+const { agregarReporte, getReportes } = require("../controllers/reportesControllers");
 const { funcionMulter } = require("../middlewares/multerStorage");
 
 const router = Router();
 
-router.get("/listar/:id?",getImages)
+router.get("/listar/:id?", getReportes);
 
 router.use("/alta",auth,(req, res, next) => {
     // Acceder a req antes de llegar al controlador
