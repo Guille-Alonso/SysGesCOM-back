@@ -18,7 +18,6 @@ const ReporteSchema = new Schema(
         },
         rutaImagen: {
             type: String,
-            required: [true, "La imagen es requerida"],
             trim: true,
         },
         naturaleza:{//quizá no haga falta pq categoría ya la indica..

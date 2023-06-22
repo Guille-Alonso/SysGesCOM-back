@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const agregarReporte= async (req, res) => {
   try {
-    const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria} = req.body;
+    const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria,photo} = req.body;
 
     const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${userName}`;
 
@@ -24,9 +24,9 @@ const agregarReporte= async (req, res) => {
       detalle,
       naturaleza,
       usuario,
-      subcategoria,
+      subcategoria: subcategoria == ""? null : subcategoria,
       dispositivo,
-      rutaImagen:filePath
+      rutaImagen:photo==undefined? filePath : ""
     });
 
     await newReporte.save();
