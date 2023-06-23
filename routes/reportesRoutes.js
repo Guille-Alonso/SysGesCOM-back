@@ -8,7 +8,7 @@ const { funcionMulter } = require("../middlewares/multerStorage");
 
 const router = Router();
 
-router.get("/listar/:id?",auth, getReportes);
+router.get("/listar/:id?", getReportes);
 
 router.use("/alta",auth,(req, res, next) => {
     // Acceder a req antes de llegar al controlador

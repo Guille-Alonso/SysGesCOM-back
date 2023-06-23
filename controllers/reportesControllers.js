@@ -44,9 +44,12 @@ const agregarReporte= async (req, res) => {
 const getReportes = async (req, res) => {
   try {
     if (req.params.id) {
+      console.log("entro");
       const reporte = await Reporte.findById(req.params.id );
       if (!reporte) throw new CustomError("Reporte no encontrado", 404);
-      res.status(200).json({ reporte });
+      // const imagePath = path.join(__dirname, reporte.rutaImagen);
+      // res.status(200).json({ reporte });
+      res.sendFile(reporte.rutaImagen);
     } else {
       const reportes = await Reporte.find({estado:true}).populate("naturaleza").populate("categoria").populate("subcategoria").populate("usuario").populate("dispositivo");
       res.status(200).json({ reportes });
