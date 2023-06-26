@@ -8,16 +8,16 @@ const agregarReporte= async (req, res) => {
     const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria,photo} = req.body;
 
     const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${userName}`;
+    let filePath="";
 
     fs.readdir(folderPath, async (err, files) => {
       if (err) {
         console.error('Error al leer la carpeta:', err);
-        return;
+      }else{
+        const lastFile = files[files.length - 1];
+        filePath = path.join(folderPath, lastFile);
       }
  
-      const lastFile = files[files.length - 1];
-      const filePath = path.join(folderPath, lastFile);
-    
     const newReporte = new Reporte({
       fecha,
       categoria,
@@ -44,12 +44,15 @@ const agregarReporte= async (req, res) => {
 const getReportes = async (req, res) => {
   try {
     if (req.params.id) {
-      console.log("entro");
       const reporte = await Reporte.findById(req.params.id );
       if (!reporte) throw new CustomError("Reporte no encontrado", 404);
-      // const imagePath = path.join(__dirname, reporte.rutaImagen);
-      // res.status(200).json({ reporte });
-      res.sendFile(reporte.rutaImagen);
+   
+      if (fs.existsSync(reporte.rutaImagen)) {
+        res.sendFile(reporte.rutaImagen);
+      } else {
+        throw new CustomError("Imágen no encontrada", 404);
+      }
+
     } else {
       const reportes = await Reporte.find({estado:true}).populate("naturaleza").populate("categoria").populate("subcategoria").populate("usuario").populate("dispositivo");
       res.status(200).json({ reportes });
