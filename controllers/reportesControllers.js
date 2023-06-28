@@ -64,8 +64,60 @@ const getReportes = async (req, res) => {
   }
 };
 
+const actualizarReporte = async (req, res) => {
+console.log(req.params);
+console.log(req.body);
+  try {
+    const { id } = req.params;
+    // const updatedReporte = req.body;
+
+  //logica de la imagen a reemplazar
+  const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${req.body.userName}`;
+  let filePath="";
+
+  if(req.body.rutaImagen !== "" && req.body.photo == undefined){
+    fs.unlink(req.body.rutaImagen, (err) => {
+      if (err) {
+        console.error('Error al borrar el archivo:', err);
+        return;
+      }
+      console.log('Archivo borrado correctamente.');
+    });
+  }
+ 
+
+  fs.readdir(folderPath, async (err, files) => {
+    if (err) {
+      console.error('Error al leer la carpeta:', err);
+    }else{
+      const lastFile = files[files.length - 1];
+      filePath = path.join(folderPath, lastFile);
+    }
+ 
+  const reporteUpd = {
+    categoria: req.body.categoria,
+    detalle: req.body.detalle,
+    naturaleza: req.body.naturaleza,
+    usuario: req.body.usuario,
+    subcategoria: req.body.subcategoria == "null"? null : req.body.subcategoria,
+    dispositivo: req.body.dispositivo,
+    rutaImagen: req.body.photo == undefined? filePath : req.body.rutaImagen
+  }
+    const reporte = await Reporte.findByIdAndUpdate(id, reporteUpd, { new: true, runValidators: true });
+    if (!reporte) throw new CustomError("Reporte no encontrado", 404)
+    res.status(200).json({ message: "Reporte modificado con exito", reporte });
+  });
+  } catch (error) {
+    res.status(error.code || 500)
+    .json({
+      message: error.message || "Ups! Hubo un problema, por favor intenta más tarde",
+    });
+  }
+};
+
 module.exports = {
     agregarReporte,
-    getReportes
+    getReportes,
+    actualizarReporte
   }
   

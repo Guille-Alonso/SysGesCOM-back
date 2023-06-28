@@ -3,7 +3,7 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarReporte, getReportes } = require("../controllers/reportesControllers");
+const { agregarReporte, getReportes, actualizarReporte } = require("../controllers/reportesControllers");
 const { funcionMulter } = require("../middlewares/multerStorage");
 
 const router = Router();
@@ -28,5 +28,14 @@ router.use("/alta",auth,(req, res, next) => {
   
     agregarReporte
   )
+
+  router.use("/actualizarReporte/:id",auth,(req, res, next) => {
+    // Acceder a req antes de llegar al controlador
+    funcionMulter(req.user).single("photo")(req, res, () => {
+      next();
+    });
+  })
+
+  router.put("/actualizarReporte/:id", actualizarReporte);
 
 module.exports = router;
