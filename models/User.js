@@ -1,41 +1,90 @@
-const {Schema,model} = require('mongoose');
+const { Schema, model } = require('mongoose');
+const mongooseUniqueValidator = require('mongoose-unique-validator');
 
-const UserSchema = new Schema({
-    name:{
-        type: String,
-        required: [true,"nombre obligatorio"],
-        trim: true,
-        minLength: [3,'no puede tener menos de 3 caracteres'],
-        maxLength: [30, 'no puede tener mas de 30 caracteres']
+const UserSchema = new Schema(
+  {
+    nombreUsuario: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      minLength: [4, "Debe tener al menos 4 caracteres"],
+      maxLength: [20, "Debe tener como máximo 20 caracteres"],
+      required: [true, "El nombre de usuario es requerido"],
     },
-    email:{
-        type: String,
-        required:[true,'el email es obligatorio'],
-        trim:true,
-        unique: [true,'ya existe un usuario con ese email'],
-        lowercase:true
+    nombre: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      minLength: [2, "Debe tener al menos 2 caracteres"],
+      maxLength: [30, "Debe tener como máximo 30 caracteres"],
+      required: [true, "El nombre es requerido"],
     },
-    password:{
-        type: String,
-        required: [true,"contraseña obligatoria"],
-        trim: true,
-        minLength: [7,'no puede tener menos de 7 caracteres'],
-        maxLength: [150, 'no puede tener mas de 50 caracteres']
+    email: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      required: [true, "El email es requerido"],
     },
-    admin:{
-         type:Boolean,
-        default:false
-    }
-  
-},
-{
-    versionKey : false,
-    timestamps: false
-});
+    foto: {
+      type: String,
+      trim: true,
+    },
+    estado: {
+      //borrado logico
+      type: Boolean,
+      default: true,
+    },
+    dni: {
+      type: String,
+      unique: true,
+    },
+    nacimiento: {
+      type: String,
+    },
+    afiliado: {
+      type: String,
+      unique: true,
+    },
+    turno: {
+      type: String,
+      enum: ["mañana", "tarde", "noche"],
+      trim: true,
+      required: [true, "El turno es requerido"],
+    },
+    tipoDeUsuario: {
+      type: String,
+      enum: [
+        "admin",
+        "visualizador",
+        "supervisor",
+        "estadística",
+        "administración",
+      ],
+      trim: true,
+      required: [true, "El tipo de usuario es requerido"],
+    },
+
+    contraseña: {
+      type: String,
+      trim: true,
+      required: [true, "La contraseña es obligatoria"],
+    },
+  },
+  {
+    versionKey: false,
+    timestamps: false,
+  }
+);
 
 UserSchema.methods.toJSON = function () {
-    const { password, ...user } = this.toObject();
-    return user;
-  };
+  const { contraseña, ...user } = this.toObject();
+  return user;
+};
 
-module.exports = model('User',UserSchema)
+UserSchema.plugin(mongooseUniqueValidator, {
+  message: '{PATH} debe ser único'
+})
+
+module.exports = model('User', UserSchema)
