@@ -3,7 +3,7 @@ const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarReporte, getReportes, actualizarReporte } = require("../controllers/reportesControllers");
+const { agregarReporte, getReportes, actualizarReporte, borrarReporte } = require("../controllers/reportesControllers");
 const { funcionMulter } = require("../middlewares/multerStorage");
 
 const router = Router();
@@ -18,7 +18,7 @@ router.use("/alta",auth,(req, res, next) => {
   })
 
   router.post("/alta",  [
-    check("detalle", "El detalle no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 50 }),
+    check("detalle", "El detalle no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 500 }),
     check("categoria", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
     check("naturaleza", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
     check("dispositivo", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
@@ -37,5 +37,14 @@ router.use("/alta",auth,(req, res, next) => {
   })
 
   router.put("/actualizarReporte/:id", actualizarReporte);
+
+  router.delete(
+    "/",
+    [ auth,
+      check("id").not().isEmpty().isMongoId(),
+      validateFields,
+    ],
+    borrarReporte
+  );
 
 module.exports = router;

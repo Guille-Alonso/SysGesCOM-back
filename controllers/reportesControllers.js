@@ -7,7 +7,7 @@ const agregarReporte= async (req, res) => {
   try {
     const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria,photo} = req.body;
 
-    const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${userName}`;
+    const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
     let filePath="";
 
     fs.readdir(folderPath, async (err, files) => {
@@ -72,7 +72,7 @@ console.log(req.body);
     // const updatedReporte = req.body;
 
   //logica de la imagen a reemplazar
-  const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${req.body.userName}`;
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${req.body.userName}`;
   let filePath="";
 
   if(req.body.rutaImagen !== "" && req.body.photo == undefined){
@@ -115,9 +115,26 @@ console.log(req.body);
   }
 };
 
+const borrarReporte = async (req,res)=>{
+  try {
+    const { id } = req.body;
+    const reporteRemove = {
+      estado:false
+    }
+    const reporteEliminado = await Reporte.findByIdAndUpdate(id,reporteRemove,{new:true})
+    if(!reporteEliminado) throw new CustomError("Reporte no encontrado",404)
+    res.status(200).json({message:"Reporte eliminado con éxito"})
+  } catch (error) {
+    res
+    .status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+}
+
 module.exports = {
     agregarReporte,
     getReportes,
-    actualizarReporte
+    actualizarReporte,
+    borrarReporte
   }
   
