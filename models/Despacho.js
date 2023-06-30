@@ -15,16 +15,11 @@ const DespachoSchema = new Schema(
             type: Boolean,
             default: true
         },
-        reporte:{
-            type: Schema.Types.ObjectId,
-            ref: "Reporte",
-            required: [true, "El reporte es requerido"],
-        },
-        reparticion:{
+        reparticiones:[{
             type: Schema.Types.ObjectId,
             ref: "Reparticion",
-            required: [true, "La repartición es requerida"],
-        },
+            // required: [true, "La repartición es requerida"],
+        }],
     },
     {
         versionKey: false,
