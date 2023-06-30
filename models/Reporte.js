@@ -16,6 +16,14 @@ const ReporteSchema = new Schema(
             type: Boolean,
             default: true
         },
+        despachado:{
+            type: Boolean,
+            default: false
+        },
+        numero:{//ver bien como hacerlo secuencial y unico
+            type: String,
+            unique: true
+        },
         rutaImagen: {
             type: String,
             trim: true,
