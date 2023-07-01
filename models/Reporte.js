@@ -18,7 +18,7 @@ const ReporteSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    numero: { type: Number },
+    numero: { type: Number ,unique:true},
     rutaImagen: {
       type: String,
       trim: true,
