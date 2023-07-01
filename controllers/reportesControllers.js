@@ -7,7 +7,7 @@ const agregarReporte= async (req, res) => {
   try {
     const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria,photo} = req.body;
 
-    const folderPath =`C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
+    const folderPath =`C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${userName}`;
     let filePath="";
 
     fs.readdir(folderPath, async (err, files) => {
@@ -54,21 +54,55 @@ const getReportes = async (req, res) => {
       }
 
     } else {
-      if(req.user.tipoDeUsuario=="visualizador"){
-      const reportes = await Reporte.find({estado:true,usuario:req.user._id, createdAt: {
-        $gte: new Date("2023-06-30T00:00:00.000Z"),
-        $lt: new Date("2023-07-01T00:00:00.000Z")
-      }}).populate("naturaleza").populate("categoria").populate("subcategoria").populate("usuario").populate("dispositivo");
-      res.status(200).json({ reportes });
-      }else if( req.user.tipoDeUsuario=="supervisor"){
-        const reportes = await Reporte.find({estado:true, createdAt: {
-          $gte: new Date("2023-06-30T00:00:00.000Z"),
-          $lt: new Date("2023-07-01T00:00:00.000Z")
-        }}).populate("naturaleza").populate("categoria").populate("subcategoria").populate("usuario").populate("dispositivo");
+      if (req.user.tipoDeUsuario == "visualizador") {
+        const fechaActual = new Date();
+        fechaActual.setHours(0, 0, 0, 0);
+        const fechaSiguiente = new Date(fechaActual);
+        fechaSiguiente.setDate(fechaSiguiente.getDate() + 1);
+
+        const reportes = await Reporte.find({
+          estado: true,
+          usuario: req.user._id,
+          createdAt: {
+            $gte: fechaActual,
+            $lt: fechaSiguiente,
+          },
+        })
+          .populate("naturaleza")
+          .populate("categoria")
+          .populate("subcategoria")
+          .populate("usuario")
+          .populate("dispositivo");
         res.status(200).json({ reportes });
-      }else{
-      const reportes = await Reporte.find({estado:true}).populate("naturaleza").populate("categoria").populate("subcategoria").populate("usuario").populate("dispositivo");
-      res.status(200).json({ reportes });
+      } else if (req.user.tipoDeUsuario == "supervisor") {
+        const fechaActual = new Date();
+        fechaActual.setHours(0, 0, 0, 0);
+        const fechaAnterior = new Date(fechaActual);
+        fechaAnterior.setDate(fechaAnterior.getDate() - 1);
+        const fechaSiguiente = new Date(fechaActual);
+        fechaSiguiente.setDate(fechaSiguiente.getDate() + 1);
+      
+        const reportes = await Reporte.find({
+          estado: true,
+          createdAt: {
+            $gte: fechaAnterior,
+            $lt: fechaSiguiente,
+          },
+        })
+          .populate("naturaleza")
+          .populate("categoria")
+          .populate("subcategoria")
+          .populate("usuario")
+          .populate("dispositivo");
+        res.status(200).json({ reportes });
+      } else {
+        const reportes = await Reporte.find({ estado: true })
+          .populate("naturaleza")
+          .populate("categoria")
+          .populate("subcategoria")
+          .populate("usuario")
+          .populate("dispositivo");
+        res.status(200).json({ reportes });
       }
     }
   } catch (error) {
@@ -86,7 +120,7 @@ console.log(req.body);
     // const updatedReporte = req.body;
 
   //logica de la imagen a reemplazar
-  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${req.body.userName}`;
+  const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${req.body.userName}`;
   let filePath="";
 
   if(req.body.rutaImagen !== "" && req.body.photo == undefined){
