@@ -5,10 +5,11 @@ const Reporte = require("../models/Reporte");
 
 const agregarDespacho= async (req, res) => {
     try {
-      const { fecha,acuse,reparticiones,reporteId} = req.body;
+      const { fecha,acuse,reparticiones,reporteId,usuario} = req.body;
   
       const newDespacho = new Despacho({
         fecha,
+        usuario,
         acuse,
         reparticiones:reparticiones.map((id) => new mongoose.Types.ObjectId(id))
       });
