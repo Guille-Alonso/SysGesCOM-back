@@ -15,6 +15,11 @@ const DespachoSchema = new Schema(
             type: Boolean,
             default: true
         },
+        usuario: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: [true, "El usuario es requerido"],
+          },
         reparticiones:[{
             type: Schema.Types.ObjectId,
             ref: "Reparticion",

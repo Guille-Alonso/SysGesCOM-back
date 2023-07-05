@@ -36,7 +36,7 @@ router.use("/alta",auth,(req, res, next) => {
     });
   })
 
-  router.put("/actualizarReporte/:id", actualizarReporte);
+  router.put("/actualizarReporte/:id",auth, actualizarReporte);
 
   router.delete(
     "/",
