@@ -8,7 +8,6 @@ const DespachoSchema = new Schema(
         },
         acuse: {
             type: String,
-            required: [true, "El acuse es requerido"],
             trim: true,
         },
         estado:{//borrado logico
@@ -23,7 +22,7 @@ const DespachoSchema = new Schema(
         reparticiones:[{
             type: Schema.Types.ObjectId,
             ref: "Reparticion",
-            // required: [true, "La repartición es requerida"],
+            required: [true, "La repartición es requerida"],
         }],
     },
     {

@@ -22,7 +22,7 @@ router.use("/alta",auth,(req, res, next) => {
     check("categoria", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
     check("naturaleza", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
     check("dispositivo", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
-    check("usuario", "Debe ser un id de mongodb").not().isObject(),
+    check("usuario", "Debe ser un id de mongodb").not().isEmpty().isMongoId(),
     validateFields,
   ],
   

@@ -7,7 +7,15 @@ const verifyRoleSupervisor = require("../middlewares/verifyRoleSupervisor");
 
 const router = Router();
 
-router.post("/alta",auth,verifyRoleSupervisor,agregarDespacho)
+router.post("/alta",
+[auth,verifyRoleSupervisor,
+check("acuse", "El acuse no cumple los requisitos").isLength({ max: 500 }),
+check("reparticiones", "Debe ser un array").not().isEmpty().isArray(),
+validateFields,
+],
+agregarDespacho
+);
+
 router.get("/listar/:id?",auth,verifyRoleSupervisor,getDespachos);
 
 module.exports = router;
