@@ -2,7 +2,7 @@ const { Router } = require("express");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const validateFields = require("../middlewares/validateFields");
-const { agregarDespacho, getDespachos } = require("../controllers/despachosControllers");
+const { agregarDespacho, getDespachos, actualizarDespacho } = require("../controllers/despachosControllers");
 const verifyRoleSupervisor = require("../middlewares/verifyRoleSupervisor");
 
 const router = Router();
@@ -17,5 +17,7 @@ agregarDespacho
 );
 
 router.get("/listar/:id?",auth,verifyRoleSupervisor,getDespachos);
+
+router.put("/actualizarDespacho/:id",auth,verifyRoleSupervisor,actualizarDespacho);
 
 module.exports = router;
