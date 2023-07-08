@@ -7,7 +7,7 @@ const agregarReporte= async (req, res) => {
   try {
     const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria,photo} = req.body;
 
-    const folderPath =`C:\\Users\\guill\\Desktop\COM\\SysGesCOM-back\\uploads\\${userName}`;
+    const folderPath =`C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
     let filePath="";
 
     fs.readdir(folderPath, async (err, files) => {
@@ -72,7 +72,15 @@ const getReportes = async (req, res) => {
           .populate("categoria")
           .populate("subcategoria")
           .populate("usuario")
-          .populate("dispositivo");
+          .populate("dispositivo")
+          .populate({
+            path: 'despacho',
+            populate: {
+              path: 'usuario',
+              model: 'User'
+            }
+          })
+
         res.status(200).json({ reportes });
       } else if (req.user.tipoDeUsuario == "supervisor") {
         const fechaActual = new Date();
@@ -93,7 +101,15 @@ const getReportes = async (req, res) => {
           .populate("categoria")
           .populate("subcategoria")
           .populate("usuario")
-          .populate("dispositivo");
+          .populate("dispositivo")
+          .populate({
+            path: 'despacho',
+            populate: {
+              path: 'usuario',
+              model: 'User'
+            }
+          })
+
         res.status(200).json({ reportes });
       } else {
         const reportes = await Reporte.find({ estado: true })
@@ -101,7 +117,16 @@ const getReportes = async (req, res) => {
           .populate("categoria")
           .populate("subcategoria")
           .populate("usuario")
-          .populate("dispositivo");
+          .populate("dispositivo")
+          .populate({
+            path: 'despacho',
+            populate: {
+              path: 'usuario',
+              model: 'User'
+            }
+          })
+          //.populate("despacho");
+          
         res.status(200).json({ reportes });
       }
     }
@@ -120,7 +145,7 @@ console.log(req.body);
     // const updatedReporte = req.body;
 
   //logica de la imagen a reemplazar
-  const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${req.body.userName}`;
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${req.body.userName}`;
   let filePath="";
 
   if(req.body.rutaImagen !== "" && req.body.photo == undefined){

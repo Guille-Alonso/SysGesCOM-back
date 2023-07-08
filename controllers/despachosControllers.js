@@ -44,7 +44,26 @@ const agregarDespacho= async (req, res) => {
     }
   };
 
+  const actualizarDespacho = async (req, res) => {
+  
+    try {
+      const { id } = req.params;
+      const updatedDespacho = req.body;
+    
+      const despacho = await Despacho.findByIdAndUpdate(id, updatedDespacho, { new: true,runValidators: true });
+      if(!despacho) throw new CustomError("despacho no encontrado",404)
+      res.status(200).json({message:"despacho modificado con exito",despacho});
+    } catch (error) {
+      res.status(error.code || 500)
+        .json({
+          message: error.message || "Ups! Hubo un problema, por favor intenta más tarde",
+        });
+    
+    }
+  }
+
   module.exports = {
    agregarDespacho,
-   getDespachos
+   getDespachos,
+   actualizarDespacho
   }

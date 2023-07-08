@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario } = require("../controllers/usersControllers");
+const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario, editarConstraseñaUsuario } = require("../controllers/usersControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const validateFields = require("../middlewares/validateFields");
@@ -20,6 +20,9 @@ router.post(
 );
 router.put(
   "/editPassword",auth,verifyRole, editarConstraseña
+)
+router.put(
+  "/editPassword/users",auth, editarConstraseñaUsuario
 )
 router.put("/actualizarUsuario/:id",auth,verifyRole, actualizarUser);
 

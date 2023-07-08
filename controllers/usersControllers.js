@@ -61,9 +61,30 @@ const editarConstraseña = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
         await User.findByIdAndUpdate(user._id, { contraseña: passwordEncrypted })
-      } else res.status(400).json({ mensaje: "Las contraseñas no coinciden" })
+      } else throw new CustomError("Las contraseñas no coinciden", 400)
       res.status(200).json({ mensaje: "Contraseña modificada con exito" })
-    } else res.status(400).json({ mensaje: "Usuario no encontrado" })
+    } else throw new CustomError("Usuario no encontrado", 404)
+  } catch (error) {
+    res.status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+}
+
+const editarConstraseñaUsuario = async (req, res) => {
+  try {
+    const {confirmPassword, confirmPasswordRepeat, userId, password } = req.body;
+   
+    const user = await User.findById(userId);
+    if (!user) throw new CustomError("Usuario no encontrado", 404);
+    const passOk = await bcrypt.compare(password, user.contraseña);
+    if (passOk) {
+      if (confirmPassword === confirmPasswordRepeat) {
+        const salt = await bcrypt.genSalt(10);
+        const passwordEncrypted = await bcrypt.hash(confirmPassword, salt);
+        await User.findByIdAndUpdate(user._id, { contraseña: passwordEncrypted })
+      } else throw new CustomError("Las contraseñas no coinciden", 400)
+      res.status(200).json({ mensaje: "Contraseña modificada con exito" })
+    } else throw new CustomError("Contraseña incorrecta", 400)
   } catch (error) {
     res.status(error.code || 500)
       .json({ message: error.message || "algo explotó :|" });
@@ -159,6 +180,7 @@ module.exports = {
   login,
   getAuthStatus,
   editarConstraseña,
+  editarConstraseñaUsuario,
   agregarUsuario,
   actualizarUser,
   borrarUsuario
