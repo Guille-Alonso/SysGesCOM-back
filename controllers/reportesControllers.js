@@ -3,48 +3,51 @@ const CustomError = require("../utils/customError");
 const path = require('path');
 const fs = require('fs');
 
-const agregarReporte= async (req, res) => {
+const agregarReporte = async (req, res) => {
   try {
-    const { fecha,detalle,naturaleza,usuario,userName,subcategoria,dispositivo,categoria,photo} = req.body;
+    const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
 
-    const folderPath =`C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
-    let filePath="";
+    const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
+    let filePath = "";
 
     fs.readdir(folderPath, async (err, files) => {
       if (err) {
         console.error('Error al leer la carpeta:', err);
-      }else{
+      } else {
         const lastFile = files[files.length - 1];
         filePath = path.join(folderPath, lastFile);
       }
- 
+
+    });
+
+    const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
+
     const newReporte = new Reporte({
+      numero: ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1,
       fecha,
       categoria,
       detalle,
       naturaleza,
       usuario,
-      subcategoria: subcategoria == ""? null : subcategoria,
+      subcategoria: subcategoria == "" ? null : subcategoria,
       dispositivo,
-      rutaImagen:photo==undefined? filePath : ""
+      rutaImagen: photo == undefined ? filePath : ""
     });
 
     await newReporte.save();
-  });
+    res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
 
-    res.status(201).json({ message: "Se agregó un nuevo reporte con éxito" });
   } catch (error) {
-    res.status(error.code || 500)
-      .json({
-        message: error.message || "Ups! Hubo un problema, por favor intenta más tarde",
-      });
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :(" });
   }
 };
 
 const getReportes = async (req, res) => {
   try {
     if (req.params.id) {
-      const reporte = await Reporte.findById(req.params.id );
+      const reporte = await Reporte.findById(req.params.id);
       if (!reporte) throw new CustomError("Reporte no encontrado", 404);
    
       if (fs.existsSync(reporte.rutaImagen)) {

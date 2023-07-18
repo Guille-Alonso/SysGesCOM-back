@@ -18,7 +18,10 @@ const ReporteSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    numero: { type: Number ,unique:true},
+    numero: { 
+      type: Number ,
+      unique: true,
+    },
     rutaImagen: {
       type: String,
       trim: true,
@@ -58,13 +61,13 @@ const ReporteSchema = new Schema(
   }
 );
 
-ReporteSchema.pre('save', async function (next) {
-    if (!this.numero) {
-      const sequenceValue = await getNextSequenceValue('Reporte');
-      this.numero = sequenceValue;
-    }
-    next();
-  });
+// ReporteSchema.pre('save', async function (next) {
+//     if (!this.numero) {
+//       const sequenceValue = await getNextSequenceValue('Reporte');
+//       this.numero = sequenceValue;
+//     }
+//     next();
+//   });
 
 ReporteSchema.plugin(mongooseUniqueValidator,{
     message: '{PATH} debe ser único'
