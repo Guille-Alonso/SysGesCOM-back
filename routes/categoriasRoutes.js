@@ -8,7 +8,7 @@ const { agregarCategoria, getCategorias, borrarCategoria, actualizarCategoria } 
 const router = Router();
 
 router.post("/alta", [auth,verifyRole,
-  check("categoria", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 20 }),
+  check("categoria", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 40 }),
   check("naturaleza").not().isEmpty().isMongoId(),
   validateFields
 ], agregarCategoria);

@@ -17,7 +17,7 @@ const DispositivoSchema = new Schema(
             trim: true,
             lowercase: true,
             minLength: [8, "Debe tener al menos 8 caracteres"],
-            maxLength: [30, "Debe tener como máximo 30 caracteres"],
+            maxLength: [50, "Debe tener como máximo 50 caracteres"],
             required: [true, "La ubicación es requerida"],
         },
         tipo: {

@@ -8,7 +8,7 @@ const { agregarSubcategoria, getSubcategorias, borrarSubcategoria, actualizarSub
 const router = Router();
 
 router.post("/alta", [auth,verifyRole,
-    check("nombre", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 20 }),
+    check("nombre", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 60 }),
     check("categoria").not().isEmpty().isMongoId(),
     validateFields
 ], agregarSubcategoria);
