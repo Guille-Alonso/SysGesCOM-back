@@ -7,7 +7,7 @@ const agregarReporte = async (req, res) => {
   try {
     const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
 
-    const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${userName}`;
+    const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
     let filePath = "";
 
     fs.readdir(folderPath, async (err, files) => {
@@ -148,7 +148,7 @@ console.log(req.body);
     // const updatedReporte = req.body;
 
   //logica de la imagen a reemplazar
-  const folderPath = `C:\\Users\\guill\\Desktop\\COM\\SysGesCOM-back\\uploads\\${req.body.userName}`;
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${req.body.userName}`;
   let filePath="";
 
   if(req.body.rutaImagen !== "" && req.body.photo == undefined){

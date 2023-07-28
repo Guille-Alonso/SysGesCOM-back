@@ -1,13 +1,14 @@
 const { Router } = require("express");
 const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario, editarConstraseñaUsuario } = require("../controllers/usersControllers");
 const verifyRole = require("../middlewares/verifyRole");
+const verifyRolEstadistica = require("../middlewares/verifyRolEstadistica");
 const auth = require("../middlewares/auth");
 const validateFields = require("../middlewares/validateFields");
 const { check } = require("express-validator");
 
 const router = Router();
 
-router.get("/email/:email?",auth,verifyRole, getUsers)
+router.get("/email/:email?",auth,verifyRolEstadistica, getUsers)
 router.get("/authStatus", auth, getAuthStatus);
 router.post(
   "/login",
