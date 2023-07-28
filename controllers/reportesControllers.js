@@ -2,6 +2,7 @@ const Reporte = require("../models/Reporte");
 const CustomError = require("../utils/customError");
 const path = require('path');
 const fs = require('fs');
+const User = require("../models/User");
 
 const agregarReporte = async (req, res) => {
   try {
@@ -140,35 +141,43 @@ const getReportes = async (req, res) => {
   }
 };
 
-const getReportesPodio = async (req,res)=>{
+const getReportesPodio = async (req, res) => {
 
   try {
     const reportes = await Reporte.find({ estado: true }).populate("usuario")
+
     const reportesPorUsuario = reportes.reduce((contador, rep) => {
-      const userId = rep.usuario.toString(); // Asumiendo que "usuario" es un ObjectId
+      const userId = rep.usuario._id.toString(); // Asegúrate de acceder correctamente al ID del usuario
       contador[userId] = (contador[userId] || 0) + 1;
       return contador;
     }, {});
-    
-    // 2. Obtener los usuarios con la cantidad de reportes
+
     const usuariosConReportes = Object.keys(reportesPorUsuario).map(userId => ({
       usuario: userId,
-      cantidadDeReportes: reportesPorUsuario[userId]
+      cantidadDeReportes: reportesPorUsuario[userId],
     }));
-    
-    // 3. Ordenar los usuarios en orden descendente según la cantidad de reportes
+
     const usuariosOrdenados = usuariosConReportes.sort((a, b) => b.cantidadDeReportes - a.cantidadDeReportes);
-    
-    // 4. Obtener los 3 usuarios con mayor cantidad de reportes
+
     const usuariosConMasReportes = usuariosOrdenados.slice(0, 3);
     
-    // Ahora "usuariosConMasReportes" contendrá un array de objetos con el ID del usuario y la cantidad de reportes
+    // Obtener los datos completos de los usuarios a través del modelo "Usuario"
+    const usuariosCompletos = await User.find({ _id: { $in: usuariosConMasReportes.map(user => user.usuario) } });
 
-    res.status(200).json({ usuariosConMasReportes });
+    // Reemplazar el ID del usuario por el objeto completo del usuario en la lista de usuarios con más reportes
+    const usuariosConMasReportesConDetalles = usuariosConMasReportes.map(usuario => {
+      const usuarioCompleto = usuariosCompletos.find(user => user._id.toString() === usuario.usuario);
+      return {
+        usuario: JSON.parse(JSON.stringify(usuarioCompleto)), // Convertir a objeto JavaScript
+        cantidadDeReportes: usuario.cantidadDeReportes,
+      };
+    });
+ 
+    res.status(200).json({ usuariosConMasReportes: usuariosConMasReportesConDetalles });
   } catch (error) {
     res
-    .status(error.code || 500)
-    .json({ message: error.message || "algo explotó :|" });
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
   }
 }
 
