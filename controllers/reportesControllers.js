@@ -140,6 +140,38 @@ const getReportes = async (req, res) => {
   }
 };
 
+const getReportesPodio = async (req,res)=>{
+
+  try {
+    const reportes = await Reporte.find({ estado: true }).populate("usuario")
+    const reportesPorUsuario = reportes.reduce((contador, rep) => {
+      const userId = rep.usuario.toString(); // Asumiendo que "usuario" es un ObjectId
+      contador[userId] = (contador[userId] || 0) + 1;
+      return contador;
+    }, {});
+    
+    // 2. Obtener los usuarios con la cantidad de reportes
+    const usuariosConReportes = Object.keys(reportesPorUsuario).map(userId => ({
+      usuario: userId,
+      cantidadDeReportes: reportesPorUsuario[userId]
+    }));
+    
+    // 3. Ordenar los usuarios en orden descendente según la cantidad de reportes
+    const usuariosOrdenados = usuariosConReportes.sort((a, b) => b.cantidadDeReportes - a.cantidadDeReportes);
+    
+    // 4. Obtener los 3 usuarios con mayor cantidad de reportes
+    const usuariosConMasReportes = usuariosOrdenados.slice(0, 3);
+    
+    // Ahora "usuariosConMasReportes" contendrá un array de objetos con el ID del usuario y la cantidad de reportes
+
+    res.status(200).json({ usuariosConMasReportes });
+  } catch (error) {
+    res
+    .status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+}
+
 const actualizarReporte = async (req, res) => {
 console.log(req.params);
 console.log(req.body);
@@ -210,6 +242,7 @@ module.exports = {
     agregarReporte,
     getReportes,
     actualizarReporte,
-    borrarReporte
+    borrarReporte,
+    getReportesPodio
   }
   
