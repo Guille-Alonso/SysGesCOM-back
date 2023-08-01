@@ -30,7 +30,7 @@ router.put("/actualizarUsuario/:id",auth,verifyRole, actualizarUser);
 router.post("/alta",
   [ auth,verifyRole,
     check("userName", "El usuario no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 20 }),
-    check("name", "El nombre no cumple los requisitos").not().isEmpty().isLength({ min: 2, max: 30 }),
+    check("name", "El nombre no cumple los requisitos").not().isEmpty().isLength({ min: 2, max: 40 }),
     check("dni", "El dni debe ser numérico").not().isEmpty().isLength({ max: 8 }),
     check("fechaNac", "La fecha debe ser Ingresada").not().isEmpty(),
     check("numAfil", "El afiliado no cumple los requisitos").not().isEmpty().isLength({ max: 5 }),

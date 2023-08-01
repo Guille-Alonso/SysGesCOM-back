@@ -17,7 +17,7 @@ const UserSchema = new Schema(
       trim: true,
       uppercase: true,
       minLength: [2, "Debe tener al menos 2 caracteres"],
-      maxLength: [30, "Debe tener como máximo 30 caracteres"],
+      maxLength: [40, "Debe tener como máximo 40 caracteres"],
       required: [true, "El nombre es requerido"],
     },
     email: {
