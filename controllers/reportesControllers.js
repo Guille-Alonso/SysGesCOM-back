@@ -141,38 +141,106 @@ const getReportes = async (req, res) => {
   }
 };
 
-const getReportesPodio = async (req, res) => {
-
+const getReportesPaginacion = async (req,res) =>{
   try {
-    const reportes = await Reporte.find({ estado: true }).populate("usuario")
+  const perPage = 10; // Número de resultados por página
+  const page = parseInt(req.query.page) || 1; // Página solicitada (puede venir desde el front-end)
+  const startIndex = (page - 1) * perPage;
 
-    const reportesPorUsuario = reportes.reduce((contador, rep) => {
-      const userId = rep.usuario._id.toString(); // Asegúrate de acceder correctamente al ID del usuario
-      contador[userId] = (contador[userId] || 0) + 1;
+  const reportes = await Reporte.find({ estado: true }).skip(startIndex).limit(perPage)
+    .populate("naturaleza")
+    .populate("categoria")
+    .populate("subcategoria")
+    .populate("usuario")
+    .populate("dispositivo")
+    .populate({
+      path: 'despacho',
+      populate: {
+        path: 'usuario',
+        model: 'User'
+      }
+    })
+    //.populate("despacho");
+
+    const totalDocuments = await Reporte.countDocuments({ estado: true });
+    const totalPages = Math.ceil(totalDocuments / perPage);
+    
+    res.status(200).json({ reportes, currentPage: page,
+    totalPages: totalPages });
+    
+  } catch (error) {
+    res
+    .status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+  
+}
+
+const getReportesPodio = async (req,res)=>{
+  try {
+    const reportes = await Reporte.find({ estado: true }).populate("usuario");
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    const reportesConDespachoYMesActual = reportes.filter(rep => {
+      return rep.despacho !== undefined && 
+             rep.createdAt.getMonth() === currentMonth && 
+             rep.createdAt.getFullYear() === currentYear;
+    });
+    const reportesPorUsuarioYMes = reportesConDespachoYMesActual.reduce((contador, rep) => {
+      const userId = rep.usuario._id.toString();
+      const month = rep.createdAt.getMonth();
+      const year = rep.createdAt.getFullYear();
+
+      const clave = `${userId}-${year}-${month}`;
+      contador[clave] = (contador[clave] || 0) + 1;
       return contador;
     }, {});
 
-    const usuariosConReportes = Object.keys(reportesPorUsuario).map(userId => ({
-      usuario: userId,
-      cantidadDeReportes: reportesPorUsuario[userId],
-    }));
+    const usuariosConReportesPorMes = Object.keys(reportesPorUsuarioYMes).map(clave => {
+      const [userId, year, month] = clave.split('-');
+      return {
+        usuario: userId,
+        year: parseInt(year),
+        month: parseInt(month),
+        cantidadDeReportes: reportesPorUsuarioYMes[clave],
+      };
+    });
 
-    const usuariosOrdenados = usuariosConReportes.sort((a, b) => b.cantidadDeReportes - a.cantidadDeReportes);
+    const usuariosConMasReportesPorMes = {};
+    usuariosConReportesPorMes.forEach(rep => {
+      if (!usuariosConMasReportesPorMes[rep.year]) {
+        usuariosConMasReportesPorMes[rep.year] = {};
+      }
+      if (!usuariosConMasReportesPorMes[rep.year][rep.month]) {
+        usuariosConMasReportesPorMes[rep.year][rep.month] = [];
+      }
+      usuariosConMasReportesPorMes[rep.year][rep.month].push(rep);
+    });
 
-    const usuariosConMasReportes = usuariosOrdenados.slice(0, 3);
-    
-    // Obtener los datos completos de los usuarios a través del modelo "Usuario"
-    const usuariosCompletos = await User.find({ _id: { $in: usuariosConMasReportes.map(user => user.usuario) } });
+    const top3UsuariosPorMes = [];
+    for (const year in usuariosConMasReportesPorMes) {
+      for (const month in usuariosConMasReportesPorMes[year]) {
+        const usuariosEnMes = usuariosConMasReportesPorMes[year][month];
+        usuariosEnMes.sort((a, b) => b.cantidadDeReportes - a.cantidadDeReportes);
+        top3UsuariosPorMes.push(...usuariosEnMes.slice(0, 3));
+      }
+    }
 
-    // Reemplazar el ID del usuario por el objeto completo del usuario en la lista de usuarios con más reportes
-    const usuariosConMasReportesConDetalles = usuariosConMasReportes.map(usuario => {
+    const usuariosCompletos = await User.find({ _id: { $in: top3UsuariosPorMes.map(user => user.usuario) } });
+
+    const usuariosConMasReportesConDetalles = top3UsuariosPorMes.map(usuario => {
       const usuarioCompleto = usuariosCompletos.find(user => user._id.toString() === usuario.usuario);
       return {
-        usuario: JSON.parse(JSON.stringify(usuarioCompleto)), // Convertir a objeto JavaScript
+        usuario: JSON.parse(JSON.stringify(usuarioCompleto)),
+        year: usuario.year,
+        month: usuario.month,
         cantidadDeReportes: usuario.cantidadDeReportes,
       };
     });
- 
+
     res.status(200).json({ usuariosConMasReportes: usuariosConMasReportesConDetalles });
   } catch (error) {
     res
@@ -252,6 +320,7 @@ module.exports = {
     getReportes,
     actualizarReporte,
     borrarReporte,
-    getReportesPodio
+    getReportesPodio,
+    getReportesPaginacion
   }
   
