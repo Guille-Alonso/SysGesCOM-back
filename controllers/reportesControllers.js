@@ -185,9 +185,9 @@ const getReportesPodio = async (req,res)=>{
     const currentMonth = currentDate.getMonth();
 
     const reportesConDespachoYMesActual = reportes.filter(rep => {
-      return rep.despacho !== undefined && 
-             rep.createdAt.getMonth() === currentMonth && 
+      return rep.createdAt.getMonth() === currentMonth && 
              rep.createdAt.getFullYear() === currentYear;
+            //  rep.despacho !== undefined && 
     });
     const reportesPorUsuarioYMes = reportesConDespachoYMesActual.reduce((contador, rep) => {
       const userId = rep.usuario._id.toString();
