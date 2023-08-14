@@ -79,11 +79,17 @@ const getReportes = async (req, res) => {
           .populate("dispositivo")
           .populate({
             path: 'despacho',
-            populate: {
-              path: 'usuario',
-              model: 'User'
-            }
-          })
+            populate: [
+                {
+                    path: 'usuario',
+                    model: 'User'
+                },
+                {
+                    path: 'reparticiones',
+                    model: 'Reparticion'
+                }
+            ]
+        });
 
         res.status(200).json({ reportes });
       } else if (req.user.tipoDeUsuario == "supervisor") {
@@ -108,11 +114,17 @@ const getReportes = async (req, res) => {
           .populate("dispositivo")
           .populate({
             path: 'despacho',
-            populate: {
-              path: 'usuario',
-              model: 'User'
-            }
-          })
+            populate: [
+                {
+                    path: 'usuario',
+                    model: 'User'
+                },
+                {
+                    path: 'reparticiones',
+                    model: 'Reparticion'
+                }
+            ]
+        });
 
         res.status(200).json({ reportes });
       } else {
@@ -122,15 +134,28 @@ const getReportes = async (req, res) => {
           .populate("subcategoria")
           .populate("usuario")
           .populate("dispositivo")
+          // .populate({
+          //   path: 'despacho',
+          //   populate: {
+          //     path: 'usuario',
+          //     model: 'User'
+          //   }
+          // })
+
           .populate({
             path: 'despacho',
-            populate: {
-              path: 'usuario',
-              model: 'User'
-            }
-          })
-          //.populate("despacho");
-          
+            populate: [
+                {
+                    path: 'usuario',
+                    model: 'User'
+                },
+                {
+                    path: 'reparticiones',
+                    model: 'Reparticion'
+                }
+            ]
+        });
+       
         res.status(200).json({ reportes });
       }
     }
