@@ -28,8 +28,10 @@ const getCambios = async (req, res) => {
             if (!cambios) throw new CustomError("Cambios no encontrados", 404);
             res.status(200).json({ cambios });
         } else {
+            
             const cambios = await PedidoCambio.find().populate("solicitante").populate("solicitado");
             res.status(200).json({ cambios });
+
         }
     } catch (error) {
         res
@@ -37,6 +39,21 @@ const getCambios = async (req, res) => {
             .json({ message: error.message || "algo explotó :|" });
     }
 };
+
+const getCambiosVisualizador = async (req, res) => {
+    try {
+        const cambios = await PedidoCambio.find({   $or: [
+            { solicitante: req.user._id },
+            { solicitado: req.user._id }
+          ] }).populate("solicitante").populate("solicitado");
+        res.status(200).json({ cambios });
+
+    } catch (error) {
+        res
+            .status(error.code || 500)
+            .json({ message: error.message || "algo explotó :|" });
+    }
+}
 
 const confirmarCambio =
     async (req, res) => {
@@ -68,9 +85,23 @@ const confirmarCambio =
         }
     }
 
+    const deletePedidoCambio = async (req, res) => {
+        try {
+          const { id } = req.body;
+          const pedidoRemoved = await PedidoCambio.findByIdAndDelete(id);
+          if (!pedidoRemoved) throw new CustomError("Pedido no encontrado", 404);
+          res.status(200).json({ message: "El Pedido de cambio ha sido eliminado" });
+        } catch (error) {
+          res
+            .status(error.code || 500)
+            .json({ message: error.message || "algo explotó :|" });
+        }
+      };
+
 module.exports = {
     agregarPedidoCambio,
     getCambios,
     confirmarCambio,
-
+    getCambiosVisualizador,
+    deletePedidoCambio
 }
