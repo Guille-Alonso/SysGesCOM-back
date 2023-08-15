@@ -28,13 +28,10 @@ const getCambios = async (req, res) => {
             if (!cambios) throw new CustomError("Cambios no encontrados", 404);
             res.status(200).json({ cambios });
         } else {
-            if(req.user.tipoDeUsuario == "visualizador"){
-                const cambios = await PedidoCambio.find({solicitante:req.user._id}).populate("solicitante").populate("solicitado");
-                res.status(200).json({ cambios });
-            }else{
-                const cambios = await PedidoCambio.find().populate("solicitante").populate("solicitado");
-                res.status(200).json({ cambios });
-            }
+
+            const cambios = await PedidoCambio.find().populate("solicitante").populate("solicitado");
+            res.status(200).json({ cambios });
+
         }
     } catch (error) {
         res
@@ -42,6 +39,18 @@ const getCambios = async (req, res) => {
             .json({ message: error.message || "algo explotó :|" });
     }
 };
+
+const getCambiosVisualizador = async (req, res) => {
+    try {
+        const cambios = await PedidoCambio.find({ solicitante: req.user._id }).populate("solicitante").populate("solicitado");
+        res.status(200).json({ cambios });
+
+    } catch (error) {
+        res
+            .status(error.code || 500)
+            .json({ message: error.message || "algo explotó :|" });
+    }
+}
 
 const confirmarCambio =
     async (req, res) => {
@@ -77,5 +86,5 @@ module.exports = {
     agregarPedidoCambio,
     getCambios,
     confirmarCambio,
-
+    getCambiosVisualizador
 }

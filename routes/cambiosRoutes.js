@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { agregarPedidoCambio, getCambios, confirmarCambio } = require("../controllers/cambiosTurnoControllers");
+const { agregarPedidoCambio, getCambios, confirmarCambio, getCambiosVisualizador } = require("../controllers/cambiosTurnoControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
@@ -11,6 +11,7 @@ router.post("/alta", [auth,
 ], agregarPedidoCambio);
 
 router.get("/listar", auth, getCambios);
+router.get("/listarCambiosVisualizador", auth, getCambiosVisualizador);
 router.put("/confirmarCambio/:id", auth, confirmarCambio);
 
 module.exports = router;
