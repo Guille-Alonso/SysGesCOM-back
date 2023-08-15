@@ -82,9 +82,23 @@ const confirmarCambio =
         }
     }
 
+    const deletePedidoCambio = async (req, res) => {
+        try {
+          const { id } = req.body;
+          const pedidoRemoved = await PedidoCambio.findByIdAndDelete(id);
+          if (!pedidoRemoved) throw new CustomError("Pedido no encontrado", 404);
+          res.status(200).json({ message: "El Pedido de cambio ha sido eliminado" });
+        } catch (error) {
+          res
+            .status(error.code || 500)
+            .json({ message: error.message || "algo explotó :|" });
+        }
+      };
+
 module.exports = {
     agregarPedidoCambio,
     getCambios,
     confirmarCambio,
-    getCambiosVisualizador
+    getCambiosVisualizador,
+    deletePedidoCambio
 }
