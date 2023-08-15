@@ -5,12 +5,12 @@ const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
 const router = Router();
 
-router.post("/alta", [auth, verifyRole,
+router.post("/alta", [auth,
     // check("pedido", "no hay fecha ingresada").not().isEmpty().isString(),
 
 ], agregarPedidoCambio);
 
 router.get("/listar", auth, getCambios);
-router.put("/confirmarCambio/:id", auth, verifyRole, confirmarCambio);
+router.put("/confirmarCambio/:id", auth, confirmarCambio);
 
 module.exports = router;

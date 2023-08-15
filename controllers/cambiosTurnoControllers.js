@@ -28,8 +28,13 @@ const getCambios = async (req, res) => {
             if (!cambios) throw new CustomError("Cambios no encontrados", 404);
             res.status(200).json({ cambios });
         } else {
-            const cambios = await PedidoCambio.find().populate("solicitante").populate("solicitado");
-            res.status(200).json({ cambios });
+            if(req.user.tipoDeUsuario == "visualizador"){
+                const cambios = await PedidoCambio.find({solicitante:req.user._id}).populate("solicitante").populate("solicitado");
+                res.status(200).json({ cambios });
+            }else{
+                const cambios = await PedidoCambio.find().populate("solicitante").populate("solicitado");
+                res.status(200).json({ cambios });
+            }
         }
     } catch (error) {
         res
