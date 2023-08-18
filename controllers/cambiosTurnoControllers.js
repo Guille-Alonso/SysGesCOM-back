@@ -3,14 +3,13 @@ const CustomError = require("../utils/customError");
 
 const agregarPedidoCambio = async (req, res) => {
     try {
-        console.log(req.body);
         const { pedido, estado, solicitante } = req.body;
         const newPedidoCambio = new PedidoCambio({
             pedido,
             estado,
             solicitante
         });
-        await newPedidoCambio.save();
+         await newPedidoCambio.save();
         res.status(201).json({ message: "Se agregó un nuevo pedido de cambio" });
     } catch (error) {
         res.status(error.code || 500)
@@ -28,9 +27,16 @@ const getCambios = async (req, res) => {
             if (!cambios) throw new CustomError("Cambios no encontrados", 404);
             res.status(200).json({ cambios });
         } else {
-            
-            const cambios = await PedidoCambio.find().populate("solicitante").populate("solicitado");
-            res.status(200).json({ cambios });
+            console.log(req.user.tipoDeUsuario);
+            const cambiosBack = await PedidoCambio.find().populate("solicitante").populate("solicitado");
+            if(req.user.tipoDeUsuario=="admin" || req.user.tipoDeUsuario=="administración"){
+             
+                res.status(200).json({ cambios:cambiosBack });
+            }else{
+
+                const cambios = cambiosBack.filter(camb=>camb.solicitante.tipoDeUsuario == req.user.tipoDeUsuario)
+                res.status(200).json({ cambios });
+            }
 
         }
     } catch (error) {

@@ -3,9 +3,10 @@ const { agregarRelevamientoMotos, getRelevamientoMotos } = require("../controlle
 const verifyRole = require("../middlewares/verifyRole");
 const auth = require("../middlewares/auth");
 const { check } = require("express-validator");
+const verifyStatusUserMotos = require("../middlewares/verifyStatusUserMotos");
 const router = Router();
 
-router.post("/alta", [auth, verifyRole,
+router.post("/alta", [auth, verifyStatusUserMotos,
     check("arrayMotos", "no hay persona/s seleccionada/s").isArray(),], agregarRelevamientoMotos);
 
 router.get("/listar", auth, getRelevamientoMotos);

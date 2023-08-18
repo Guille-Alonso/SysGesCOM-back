@@ -27,7 +27,7 @@ const PedidoCambioSchema = new Schema(
         },
         estado: {
             type: String,
-            enum: ["consultado", "acordado", "confirmado"],
+            enum: ["consultado", "acordado", "confirmado","rechazado"],
             trim: true,
         },
     },

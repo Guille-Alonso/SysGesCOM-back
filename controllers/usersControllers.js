@@ -175,6 +175,22 @@ const borrarUsuario = async (req,res)=>{
   }
 }
 
+const actualizarRelevamiento = async (req,res)=>{
+try {
+  const { id } = req.params;
+  const updatedUser = req.body;
+
+  const user = await User.findByIdAndUpdate(id, updatedUser, { new: true,runValidators: true});
+  if(!user) throw new CustomError("usuario no encontrado",404)
+  res.status(200).json({message:"usuario modificado con exito",user});
+
+} catch (error) {
+  res
+  .status(error.code || 500)
+  .json({ message: error.message || "algo explotó :|" });
+}
+}
+
 module.exports = {
   getUsers,
   login,
@@ -183,5 +199,6 @@ module.exports = {
   editarConstraseñaUsuario,
   agregarUsuario,
   actualizarUser,
-  borrarUsuario
+  borrarUsuario,
+  actualizarRelevamiento
 };

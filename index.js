@@ -19,6 +19,7 @@ const cambiosRoutes = require('./routes/cambiosRoutes')
 const relevamientoMotosRoutes = require('./routes/relevamientoMotosRoutes')
 
 const app = express();
+
 app.use(cors());
 dotenv.config();
 connectDB();
@@ -39,6 +40,5 @@ app.use('/reparticiones', reparticionesRoutes)
 app.use('/despachos', despachosRoutes)
 app.use('/cambios', cambiosRoutes)
 app.use('/relevamientoMotos', relevamientoMotosRoutes)
-
 
 app.listen(PORT, () => { console.log(`server listening on port ${PORT}`) })
