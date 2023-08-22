@@ -6,10 +6,11 @@ const verifyRoleSupervisor = require("../middlewares/verifyRoleSupervisor");
 const auth = require("../middlewares/auth");
 const validateFields = require("../middlewares/validateFields");
 const { check } = require("express-validator");
+const verifyRoleSupervEstad = require("../middlewares/verifyRolEstadSuper");
 
 const router = Router();
 
-router.get("/email/:email?",auth,verifyRolEstadistica, getUsers)
+router.get("/email/:email?",auth,verifyRoleSupervEstad, getUsers)
 router.get("/authStatus", auth, getAuthStatus);
 router.post(
   "/login",

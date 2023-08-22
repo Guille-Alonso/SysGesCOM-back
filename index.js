@@ -19,7 +19,6 @@ const cambiosRoutes = require('./routes/cambiosRoutes')
 const relevamientoMotosRoutes = require('./routes/relevamientoMotosRoutes')
 
 const app = express();
-
 app.use(cors());
 dotenv.config();
 connectDB();
