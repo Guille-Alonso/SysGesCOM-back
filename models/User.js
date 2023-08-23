@@ -71,6 +71,10 @@ const UserSchema = new Schema(
       trim: true,
       required: [true, "La contraseña es obligatoria"],
     },
+    relevamientoHabilitado:{
+      type:Boolean,
+      default:false
+    }
   },
   {
     versionKey: false,
