@@ -11,7 +11,7 @@ const router = Router();
 
 router.get("/listar/:id?", auth,getReportes);
 router.get("/listarConPaginacion", auth,verifyRoleEstadistica,getReportesPaginacion);
-router.get("/podio", auth,getReportesPodio);
+router.get("/podio/:turno?", auth,getReportesPodio);
 
 router.use("/alta",auth,(req, res, next) => {
     // Acceder a req antes de llegar al controlador
