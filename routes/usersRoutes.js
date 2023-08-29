@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario, editarConstraseñaUsuario, actualizarRelevamiento, noticias } = require("../controllers/usersControllers");
+const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario, editarConstraseñaUsuario, actualizarRelevamiento, noticias, actualizarCampoNoticiasParaTodos } = require("../controllers/usersControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const verifyRolEstadistica = require("../middlewares/verifyRolEstadistica");
 const verifyRoleSupervisor = require("../middlewares/verifyRoleSupervisor");
@@ -30,6 +30,7 @@ router.put(
 router.put("/actualizarUsuario/:id", auth, verifyRole, actualizarUser);
 router.put("/actualizarRelevamiento/:id", auth, verifyRoleSupervisor, actualizarRelevamiento);
 router.put("/noticias/:id", auth, noticias);
+router.put("/noticias/reset", auth,verifyRole, actualizarCampoNoticiasParaTodos);
 
 router.post("/alta",
   [auth, verifyRole,

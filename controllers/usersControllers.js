@@ -206,6 +206,17 @@ const noticias = async (req, res) => {
   }
 }
 
+const actualizarCampoNoticiasParaTodos = async (req, res) => {
+  try {
+
+    await User.updateMany({}, { $set: { noticias: true } });
+
+    res.status(200).json({ message: 'Campo actualizado con éxito en todos los usuarios' });
+  } catch (error) {
+    res.status(error.code || 500).json({ message: error.message || 'Algo explotó :|' });
+  }
+};
+
 module.exports = {
   getUsers,
   login,
@@ -216,5 +227,6 @@ module.exports = {
   actualizarUser,
   borrarUsuario,
   actualizarRelevamiento,
-  noticias
+  noticias,
+  actualizarCampoNoticiasParaTodos
 };
