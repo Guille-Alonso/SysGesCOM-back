@@ -42,6 +42,8 @@ const agregarReporte = async (req, res) => {
     res
       .status(error.code || 500)
       .json({ message: error.message || "algo explotó :(" });
+      console.log(error.code)
+      console.log(error.name)
   }
 };
 
