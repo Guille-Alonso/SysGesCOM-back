@@ -12,9 +12,9 @@ const actualizarUser =
       // console.log(req.params)
       console.log(updatedUser)
       // Encuentra y actualiza el usuario en la base de datos
-      const user = await User.findByIdAndUpdate(id, updatedUser, { new: true,runValidators: true});
-      if(!user) throw new CustomError("usuario no encontrado",404)
-      res.status(200).json({message:"usuario modificado con exito",user});
+      const user = await User.findByIdAndUpdate(id, updatedUser, { new: true, runValidators: true });
+      if (!user) throw new CustomError("usuario no encontrado", 404)
+      res.status(200).json({ message: "usuario modificado con exito", user });
     } catch (error) {
       // console.error('Error al actualizar el usuario:', error);
       if (error.name === 'ValidationError') {
@@ -23,7 +23,7 @@ const actualizarUser =
         let errorMje = "";
         for (let index = 0; index < errors.length; index++) {
           errorMje = errorMje + '-' + errors[index]
-          
+
         }
         console.log(errorMje);
         res.status(400).json({ errorMje });
@@ -31,7 +31,7 @@ const actualizarUser =
         // Otro tipo de error
         res.status(500).json({ error: 'Error al actualizar el usuario' });
       }
-    
+
     }
   }
 
@@ -42,7 +42,7 @@ const getUsers = async (req, res) => {
       if (!user) throw new CustomError("Usuario no encontrado", 404);
       res.status(200).json({ user });
     } else {
-      const users = await User.find({estado:true});
+      const users = await User.find({ estado: true });
       res.status(200).json({ users });
     }
   } catch (error) {
@@ -54,8 +54,8 @@ const getUsers = async (req, res) => {
 
 const editarConstraseña = async (req, res) => {
   try {
-    const {confirmPassword, confirmPasswordRepeat, userName } = req.body;
-    const user = await User.findOne({nombreUsuario:userName});
+    const { confirmPassword, confirmPasswordRepeat, userName } = req.body;
+    const user = await User.findOne({ nombreUsuario: userName });
     if (user) {
       if (confirmPassword === confirmPasswordRepeat) {
         const salt = await bcrypt.genSalt(10);
@@ -72,8 +72,8 @@ const editarConstraseña = async (req, res) => {
 
 const editarConstraseñaUsuario = async (req, res) => {
   try {
-    const {confirmPassword, confirmPasswordRepeat, userId, password } = req.body;
-   
+    const { confirmPassword, confirmPasswordRepeat, userId, password } = req.body;
+
     const user = await User.findById(userId);
     if (!user) throw new CustomError("Usuario no encontrado", 404);
     const passOk = await bcrypt.compare(password, user.contraseña);
@@ -159,37 +159,73 @@ const agregarUsuario = async (req, res) => {
   }
 }
 
-const borrarUsuario = async (req,res)=>{
+const borrarUsuario = async (req, res) => {
   try {
     const { id } = req.body;
     const userRemove = {
-      estado:false
+      estado: false
     }
-    const usuarioEliminado = await User.findByIdAndUpdate(id,userRemove,{new:true})
-    if(!usuarioEliminado) throw new CustomError("usuario no encontrado",404)
-    res.status(200).json({message:"Usuario eliminado con éxito"})
+    const usuarioEliminado = await User.findByIdAndUpdate(id, userRemove, { new: true })
+    if (!usuarioEliminado) throw new CustomError("usuario no encontrado", 404)
+    res.status(200).json({ message: "Usuario eliminado con éxito" })
   } catch (error) {
     res
-    .status(error.code || 500)
-    .json({ message: error.message || "algo explotó :|" });
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
   }
 }
 
-const actualizarRelevamiento = async (req,res)=>{
-try {
-  const { id } = req.params;
-  const updatedUser = req.body;
+const actualizarRelevamiento = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedUser = req.body;
 
-  const user = await User.findByIdAndUpdate(id, updatedUser, { new: true,runValidators: true});
-  if(!user) throw new CustomError("usuario no encontrado",404)
-  res.status(200).json({message:"usuario modificado con exito",user});
+    const user = await User.findByIdAndUpdate(id, updatedUser, { new: true, runValidators: true });
+    if (!user) throw new CustomError("usuario no encontrado", 404)
+    res.status(200).json({ message: "usuario modificado con exito", user });
 
-} catch (error) {
-  res
-  .status(error.code || 500)
-  .json({ message: error.message || "algo explotó :|" });
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
 }
+const noticias = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedUser = req.body;
+
+    const user = await User.findByIdAndUpdate(id, updatedUser, { new: true, runValidators: true });
+    if (!user) throw new CustomError("usuario no encontrado", 404)
+    res.status(200).json({ message: "usuario modificado con exito", user });
+
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
 }
+
+const actualizarCampoNoticiasParaTodos = async (req, res) => {
+  try {
+
+    await User.updateMany({}, { $set: { noticias: true } });
+
+    res.status(200).json({ message: 'Campo actualizado con éxito en todos los usuarios' });
+  } catch (error) {
+    res.status(error.code || 500).json({ message: error.message || 'Algo explotó :|' });
+  }
+};
+const ocultarCampoNoticiasParaTodos = async (req, res) => {
+  try {
+
+    await User.updateMany({}, { $set: { noticias: false } });
+
+    res.status(200).json({ message: 'Campo actualizado con éxito en todos los usuarios' });
+  } catch (error) {
+    res.status(error.code || 500).json({ message: error.message || 'Algo explotó :|' });
+  }
+};
 
 module.exports = {
   getUsers,
@@ -200,5 +236,8 @@ module.exports = {
   agregarUsuario,
   actualizarUser,
   borrarUsuario,
-  actualizarRelevamiento
+  actualizarRelevamiento,
+  noticias,
+  actualizarCampoNoticiasParaTodos,
+  ocultarCampoNoticiasParaTodos
 };

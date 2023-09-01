@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario, editarConstraseñaUsuario, actualizarRelevamiento } = require("../controllers/usersControllers");
+const { getUsers, login, getAuthStatus, editarConstraseña, agregarUsuario, actualizarUser, borrarUsuario, editarConstraseñaUsuario, actualizarRelevamiento, noticias, actualizarCampoNoticiasParaTodos, ocultarCampoNoticiasParaTodos } = require("../controllers/usersControllers");
 const verifyRole = require("../middlewares/verifyRole");
 const verifyRolEstadistica = require("../middlewares/verifyRolEstadistica");
 const verifyRoleSupervisor = require("../middlewares/verifyRoleSupervisor");
@@ -10,7 +10,7 @@ const verifyRoleSupervEstad = require("../middlewares/verifyRolEstadSuper");
 
 const router = Router();
 
-router.get("/email/:email?",auth,verifyRoleSupervEstad, getUsers)
+router.get("/email/:email?", auth, verifyRoleSupervEstad, getUsers)
 router.get("/authStatus", auth, getAuthStatus);
 router.post(
   "/login",
@@ -22,16 +22,19 @@ router.post(
   login
 );
 router.put(
-  "/editPassword",auth,verifyRole, editarConstraseña
+  "/editPassword", auth, verifyRole, editarConstraseña
 )
 router.put(
-  "/editPassword/users",auth, editarConstraseñaUsuario
+  "/editPassword/users", auth, editarConstraseñaUsuario
 )
-router.put("/actualizarUsuario/:id",auth,verifyRole, actualizarUser);
-router.put("/actualizarRelevamiento/:id",auth,verifyRoleSupervisor, actualizarRelevamiento);
+router.put("/actualizarUsuario/:id", auth, verifyRole, actualizarUser);
+router.put("/actualizarRelevamiento/:id", auth, verifyRoleSupervisor, actualizarRelevamiento);
+router.put("/noticias/:id", auth, noticias);
+router.get("/noticias/reset", auth, verifyRole, actualizarCampoNoticiasParaTodos);
+router.get("/noticias/ocultar", auth, verifyRole, ocultarCampoNoticiasParaTodos);
 
 router.post("/alta",
-  [ auth,verifyRole,
+  [auth, verifyRole,
     check("userName", "El usuario no cumple los requisitos").not().isEmpty().isLength({ min: 4, max: 20 }),
     check("name", "El nombre no cumple los requisitos").not().isEmpty().isLength({ min: 2, max: 40 }),
     check("dni", "El dni debe ser numérico").not().isEmpty().isLength({ max: 8 }),
@@ -48,7 +51,7 @@ router.post("/alta",
 
 router.delete(
   "/",
-  [auth,verifyRole,
+  [auth, verifyRole,
     check("id").not().isEmpty().isMongoId(),
     validateFields,
   ],
