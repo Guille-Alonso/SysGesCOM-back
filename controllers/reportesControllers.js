@@ -22,9 +22,17 @@ const agregarReporte = async (req, res) => {
     });
 
     const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
+    const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
+
+    // Verificar si el número de reporte ya existe en la colección
+    const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
+
+    if (existeReporte) {
+      res.status(400).json({ message: "Intente de nuevo en breve" });
+    } else {
 
     const newReporte = new Reporte({
-      numero: ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1,
+      numero: nuevoNumeroDeReporte,
       fecha,
       categoria,
       detalle,
@@ -37,11 +45,18 @@ const agregarReporte = async (req, res) => {
 
     await newReporte.save();
     res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
-
+  }
   } catch (error) {
-    res
-      .status(error.code || 500)
-      .json({ message: error.message || "algo explotó :(" });
+    console.log(error);
+    if (error.name === 'ValidationError') {
+
+      res.status(400).json({ message: "Hubo un error, intente nuevamente" });
+
+    } else {
+
+      res.status(error.code || 500).json({ message: 'Error al crear reporte' });
+    }
+   
   }
 };
 
@@ -128,20 +143,18 @@ const getReportes = async (req, res) => {
 
         res.status(200).json({ reportes });
       } else {
-        const reportes = await Reporte.find({ estado: true })
+        const fechaActual = new Date();
+        const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
+     
+        const reportes = await Reporte.find({
+          estado: true,
+          fecha: { $regex: new RegExp(mesActual, 'i') }
+        })
           .populate("naturaleza")
           .populate("categoria")
           .populate("subcategoria")
           .populate("usuario")
           .populate("dispositivo")
-          // .populate({
-          //   path: 'despacho',
-          //   populate: {
-          //     path: 'usuario',
-          //     model: 'User'
-          //   }
-          // })
-
           .populate({
             path: 'despacho',
             populate: [
@@ -165,6 +178,37 @@ const getReportes = async (req, res) => {
       .json({ message: error.message || "algo explotó :|" });
   }
 };
+
+const getReportesHistorico = async (req,res) => {
+  try {
+ 
+    const reportes = await Reporte.find({estado: true})
+      .populate("naturaleza")
+      .populate("categoria")
+      .populate("subcategoria")
+      .populate("usuario")
+      .populate("dispositivo")
+      .populate({
+        path: 'despacho',
+        populate: [
+            {
+                path: 'usuario',
+                model: 'User'
+            },
+            {
+                path: 'reparticiones',
+                model: 'Reparticion'
+            }
+        ]
+    });
+   
+    res.status(200).json({ reportes });
+  } catch (error) {
+    res
+    .status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+}
 
 const getReportesPaginacion = async (req,res) =>{
   try {
@@ -347,6 +391,7 @@ const borrarReporte = async (req,res)=>{
 module.exports = {
     agregarReporte,
     getReportes,
+    getReportesHistorico,
     actualizarReporte,
     borrarReporte,
     getReportesPodio,
