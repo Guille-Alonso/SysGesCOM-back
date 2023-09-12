@@ -390,6 +390,7 @@ const borrarReporte = async (req,res)=>{
 
 const getMesYTotalDeReportesVisualizador = async (req,res)=>{
   try {
+    if(req.user.tipoDeUsuario == "visualizador"){
     const fechaActual = new Date();
     const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
 
@@ -397,15 +398,31 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
       estado: true,
       usuario: req.user._id,
       fecha: { $regex: new RegExp(mesActual, 'i') }
-    });
+    }).populate("categoria");
 
     const reportesTotal = await Reporte.find({
       estado:true,
       usuario: req.user._id,
-    })
+    }).populate("categoria");
 
-    res.status(200).json({ totalMes: reportesTotalMes.length, totalHistorico: reportesTotal.length });
-    
+    res.status(200).json({ totalMes: reportesTotalMes, totalHistorico: reportesTotal });
+  }else if(req.user.tipoDeUsuario == "supervisor"){
+    const fechaActual = new Date();
+    const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
+
+    const despachosTotalMes = await Reporte.find({
+      estado: true,
+      'despacho.usuario': req.user._id,
+      fecha: { $regex: new RegExp(mesActual, 'i') }
+    }).populate("categoria");
+
+    const despachosTotal = await Reporte.find({
+      estado:true,
+      'despacho.usuario': req.user._id,
+    }).populate("categoria");
+
+    res.status(200).json({ totalMes: despachosTotalMes, totalHistorico: despachosTotal });
+  }
   } catch (error) {
     res
     .status(error.code || 500)
