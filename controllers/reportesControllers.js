@@ -388,6 +388,31 @@ const borrarReporte = async (req,res)=>{
   }
 }
 
+const getMesYTotalDeReportesVisualizador = async (req,res)=>{
+  try {
+    const fechaActual = new Date();
+    const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
+
+    const reportesTotalMes = await Reporte.find({
+      estado: true,
+      usuario: req.user._id,
+      fecha: { $regex: new RegExp(mesActual, 'i') }
+    });
+
+    const reportesTotal = await Reporte.find({
+      estado:true,
+      usuario: req.user._id,
+    })
+
+    res.status(200).json({ totalMes: reportesTotalMes.length, totalHistorico: reportesTotal.length });
+    
+  } catch (error) {
+    res
+    .status(error.code || 500)
+    .json({ message: error.message || "algo explotó :|" });
+  }
+}
+
 module.exports = {
     agregarReporte,
     getReportes,
@@ -395,6 +420,7 @@ module.exports = {
     actualizarReporte,
     borrarReporte,
     getReportesPodio,
-    getReportesPaginacion
+    getReportesPaginacion,
+    getMesYTotalDeReportesVisualizador
   }
   
