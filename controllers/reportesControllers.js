@@ -423,7 +423,7 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
       estado: true,
       despacho: { $ne: null },
       fecha: { $regex: new RegExp(mesActual, 'i') },
-      'despacho.usuario': req.user._id
+      
     }).populate({
       path: 'despacho',
       populate: 
@@ -438,7 +438,7 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
     estado: true,
     despacho: { $ne: null },
     fecha: { $regex: new RegExp(mesAnterior, 'i') },
-    'despacho.usuario': req.user._id
+    
   }).populate({
     path: 'despacho',
     populate: 
@@ -452,7 +452,7 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
     const despachosTotal = await Reporte.find({
       estado:true,
       despacho: { $ne: null },
-      'despacho.usuario': req.user._id
+      
     }).populate({
       path: 'despacho',
       populate: 
@@ -462,7 +462,7 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
           }
   }).populate("categoria")
 
-    res.status(200).json({ totalMes: despachosTotalMes, totalHistorico: despachosTotal, totalMesPasado: despachosTotalMesPasado});
+    res.status(200).json({ totalMes: despachosTotalMes.filter(rep=>rep.despacho.usuario._id==req.user._id), totalHistorico: despachosTotal.filter(rep=>rep.despacho.usuario._id==req.user._id), totalMesPasado: despachosTotalMesPasado.filter(rep=>rep.despacho.usuario._id==req.user._id)});
   }
   } catch (error) {
     res
