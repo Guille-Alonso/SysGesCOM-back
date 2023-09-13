@@ -462,7 +462,7 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
           }
   }).populate("categoria")
 
-    res.status(200).json({ totalMes: despachosTotalMes.filter(rep=>rep.despacho.usuario._id==req.user._id), totalHistorico: despachosTotal.filter(rep=>rep.despacho.usuario._id==req.user._id), totalMesPasado: despachosTotalMesPasado.filter(rep=>rep.despacho.usuario._id==req.user._id)});
+    res.status(200).json({ totalMes: despachosTotalMes.filter(rep=>rep.despacho.usuario._id.toString()==req.user._id), totalHistorico: despachosTotal.filter(rep=>rep.despacho.usuario._id.toString()==req.user._id), totalMesPasado: despachosTotalMesPasado.filter(rep=>rep.despacho.usuario._id.toString()==req.user._id)});
   }
   } catch (error) {
     res
