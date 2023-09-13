@@ -390,9 +390,14 @@ const borrarReporte = async (req,res)=>{
 
 const getMesYTotalDeReportesVisualizador = async (req,res)=>{
   try {
-    if(req.user.tipoDeUsuario == "visualizador"){
     const fechaActual = new Date();
     const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
+
+    const fechaPasada = new Date();
+    fechaPasada.setMonth(fechaPasada.getMonth() - 1); // Restar 1 al mes actual
+    const mesAnterior = fechaActual.toLocaleString('es-ES', { month: 'short' });
+
+    if(req.user.tipoDeUsuario == "visualizador"){
 
     const reportesTotalMes = await Reporte.find({
       estado: true,
@@ -400,21 +405,26 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
       fecha: { $regex: new RegExp(mesActual, 'i') }
     }).populate("categoria");
 
+    const reportesTotalMesPasado = await Reporte.find({
+      estado: true,
+      usuario: req.user._id,
+      fecha: { $regex: new RegExp(mesAnterior, 'i') }
+    }).populate("categoria");
+
     const reportesTotal = await Reporte.find({
       estado:true,
       usuario: req.user._id,
     }).populate("categoria");
 
-    res.status(200).json({ totalMes: reportesTotalMes, totalHistorico: reportesTotal });
+    res.status(200).json({ totalMes: reportesTotalMes, totalHistorico: reportesTotal, totalMesPasado: reportesTotalMesPasado });
   }else if(req.user.tipoDeUsuario == "supervisor"){
-    const fechaActual = new Date();
-    const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
 
     const despachosTotalMes = await Reporte.find({
       estado: true,
       despacho: { $ne: null },
-      fecha: { $regex: new RegExp(mesActual, 'i') }
-    })    .populate({
+      fecha: { $regex: new RegExp(mesActual, 'i') },
+      'despacho.usuario': req.user._id
+    }).populate({
       path: 'despacho',
       populate: 
           {
@@ -424,10 +434,26 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
       
   }).populate("categoria")
 
+  const despachosTotalMesPasado = await Reporte.find({
+    estado: true,
+    despacho: { $ne: null },
+    fecha: { $regex: new RegExp(mesAnterior, 'i') },
+    'despacho.usuario': req.user._id
+  }).populate({
+    path: 'despacho',
+    populate: 
+        {
+            path: 'usuario',
+            model: 'User'
+        }
+    
+}).populate("categoria")
+
     const despachosTotal = await Reporte.find({
       estado:true,
       despacho: { $ne: null },
-    })    .populate({
+      'despacho.usuario': req.user._id
+    }).populate({
       path: 'despacho',
       populate: 
           {
@@ -436,7 +462,7 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
           }
   }).populate("categoria")
 
-    res.status(200).json({ totalMes: despachosTotalMes, totalHistorico: despachosTotal});
+    res.status(200).json({ totalMes: despachosTotalMes, totalHistorico: despachosTotal, totalMesPasado: despachosTotalMesPasado});
   }
   } catch (error) {
     res
