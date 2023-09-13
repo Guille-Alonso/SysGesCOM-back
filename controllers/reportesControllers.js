@@ -412,16 +412,14 @@ const getMesYTotalDeReportesVisualizador = async (req,res)=>{
 
     const despachosTotalMes = await Reporte.find({
       estado: true,
-      'despacho.usuario': req.user._id,
       fecha: { $regex: new RegExp(mesActual, 'i') }
-    }).populate("categoria");
+    }).populate("categoria").populate("despacho");
 
     const despachosTotal = await Reporte.find({
       estado:true,
-      'despacho.usuario': req.user._id,
-    }).populate("categoria");
+    }).populate("categoria").populate("despacho");
 
-    res.status(200).json({ totalMes: despachosTotalMes, totalHistorico: despachosTotal });
+    res.status(200).json({ totalMes: despachosTotalMes.filter(rep=>rep.despacho.usuario==req.user._id), totalHistorico: despachosTotal.filter(rep=>rep.despacho.usuario==req.user._id) });
   }
   } catch (error) {
     res
