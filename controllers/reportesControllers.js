@@ -388,7 +388,7 @@ const borrarReporte = async (req,res)=>{
   }
 }
 
-const getMesYTotalDeReportesVisualizador = async (req,res)=>{
+const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
   try {
     const fechaActual = new Date();
     const mesActual = fechaActual.toLocaleString('es-ES', { month: 'short' }); // Obtenemos el nombre del mes abreviado en español
@@ -479,6 +479,6 @@ module.exports = {
     borrarReporte,
     getReportesPodio,
     getReportesPaginacion,
-    getMesYTotalDeReportesVisualizador
+    getMesYTotalDeReportesVisualizadorYSupervisor
   }
   
