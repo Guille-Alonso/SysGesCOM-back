@@ -16,7 +16,7 @@ const ticketsSchema = new Schema(
         },
         descripcion: {
             type: String,
-            required: [true, "La descripcion es requerida"], 
+            required: [true, "La descripcion es requerida"],
             minLength: [4, "Debe tener al menos 4 caracteres"],
             maxLength: [1000, "Debe tener como máximo 1000 caracteres"],
             trim: true,
@@ -25,6 +25,12 @@ const ticketsSchema = new Schema(
             //borrado logico
             type: Boolean,
             default: true,
+        },
+        estadoTicket: {
+            type: String,
+            enum: ["En Curso", "Resuelto", "Nuevo"],
+            trim: true,
+            required: [true, "El turno es requerido"],
         },
         numero: {
             type: Number,
@@ -52,9 +58,9 @@ const ticketsSchema = new Schema(
 );
 
 
- ticketsSchema.plugin(mongooseUniqueValidator,{
-     message: '{PATH} debe ser único'
-     })  
+ticketsSchema.plugin(mongooseUniqueValidator, {
+    message: '{PATH} debe ser único'
+})
 
 
 module.exports = model('Tickets', ticketsSchema);
