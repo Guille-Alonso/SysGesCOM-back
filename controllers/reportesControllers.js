@@ -4,62 +4,117 @@ const path = require('path');
 const fs = require('fs');
 const User = require("../models/User");
 
-const agregarReporte = async (req, res) => {
-  try {
-    const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
+// const agregarReporte = async (req, res) => {
+//   try {
+//     const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
 
-    const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${userName}`;
-    let filePath = "";
+//     const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${userName}`;
+//     let filePath = "";
 
-    fs.readdir(folderPath, async (err, files) => {
-      if (err) {
-        console.error('Error al leer la carpeta:', err);
-      } else {
-        const lastFile = files[files.length - 1];
-        filePath = path.join(folderPath, lastFile);
-      }
+//     fs.readdir(folderPath, async (err, files) => {
+//       if (err) {
+//         console.error('Error al leer la carpeta:', err);
+//       } else {
+//         const lastFile = files[files.length - 1];
+//         filePath = path.join(folderPath, lastFile);
+//       }
 
-    });
+//     });
 
-    const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
-    const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
+//     const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
+//     const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
 
-    // Verificar si el número de reporte ya existe en la colección
-    const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
+//     // Verificar si el número de reporte ya existe en la colección
+//     const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
 
-    if (existeReporte) {
-      res.status(400).json({ message: "Intente de nuevo en breve" });
-    } else {
+//     if (existeReporte) {
+//       res.status(400).json({ message: "Intente de nuevo en breve" });
+//     } else {
 
-    const newReporte = new Reporte({
-      numero: nuevoNumeroDeReporte,
-      fecha,
-      categoria,
-      detalle,
-      naturaleza,
-      usuario,
-      subcategoria: subcategoria == "" ? null : subcategoria,
-      dispositivo,
-      rutaImagen: photo == undefined ? filePath : ""
-    });
+//     const newReporte = new Reporte({
+//       numero: nuevoNumeroDeReporte,
+//       fecha,
+//       categoria,
+//       detalle,
+//       naturaleza,
+//       usuario,
+//       subcategoria: subcategoria == "" ? null : subcategoria,
+//       dispositivo,
+//       rutaImagen: photo == undefined ? filePath : ""
+//     });
 
-    await newReporte.save();
-    res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
-  }
-  } catch (error) {
-    console.log(error.name);
-    console.log(error);
-    if (error.name === 'ValidationError' || error.name === 'MongoServerError') {
+//     await newReporte.save();
+//     res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
+//   }
+//   } catch (error) {
+//     console.log(error.name);
+//     console.log(error);
+//     if (error.name === 'ValidationError' || error.name === 'MongoServerError') {
 
-      res.status(400).json({ message: "Hubo un error, intente nuevamente" });
+//       res.status(400).json({ message: "Hubo un error, intente nuevamente" });
 
-    } else {
+//     } else {
 
-      res.status(error.code || 500).json({ message: 'Error al crear reporte' });
-    }
+//       res.status(error.code || 500).json({ message: 'Error al crear reporte' });
+//     }
    
-  }
+//   }
+// };
+
+const agregarReporte = async (req, res) => {
+  const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
+
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
+
+  fs.readdir(folderPath, async (err, files) => {
+    if (err) {
+      console.error('Error al leer la carpeta:', err);
+      // Maneja el error aquí si es necesario.
+      res.status(500).json({ message: 'Error al leer la carpeta' });
+    } else {
+
+      try {
+        const lastFile = files[files.length - 1];
+        const filePath = path.join(folderPath, lastFile);
+
+        const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
+        const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
+
+        // Verificar si el número de reporte ya existe en la colección
+        const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
+
+        if (existeReporte) {
+          res.status(400).json({ message: "Intente de nuevo en breve" });
+        } else {
+          const newReporte = new Reporte({
+            numero: nuevoNumeroDeReporte,
+            fecha,
+            categoria,
+            detalle,
+            naturaleza,
+            usuario,
+            subcategoria: subcategoria == "" ? null : subcategoria,
+            dispositivo,
+            rutaImagen: photo == undefined ? filePath : ""
+          });
+
+          await newReporte.save();
+          res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
+        }
+
+      } catch (error) {
+        console.log(error.name);
+        console.log(error);
+        if (error.name === 'ValidationError' || error.name === 'MongoServerError') {
+          res.status(400).json({ message: "Hubo un error, intente nuevamente" });
+        } else {
+          res.status(error.code || 500).json({ message: 'Error al crear reporte' });
+        }
+      }
+    }
+  });
 };
+
 
 const getReportes = async (req, res) => {
   try {
@@ -383,7 +438,7 @@ console.log(req.body);
     // const updatedReporte = req.body;
 
   //logica de la imagen a reemplazar
-  const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${req.body.userName}`;
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${req.body.userName}`;
   let filePath="";
 
   if(req.body.rutaImagen !== "" && req.body.photo == undefined){
