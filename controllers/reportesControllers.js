@@ -4,63 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const User = require("../models/User");
 
-// const agregarReporte = async (req, res) => {
-//   try {
-//     const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
-
-//     const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${userName}`;
-//     let filePath = "";
-
-//     fs.readdir(folderPath, async (err, files) => {
-//       if (err) {
-//         console.error('Error al leer la carpeta:', err);
-//       } else {
-//         const lastFile = files[files.length - 1];
-//         filePath = path.join(folderPath, lastFile);
-//       }
-
-//     });
-
-//     const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
-//     const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
-
-//     // Verificar si el número de reporte ya existe en la colección
-//     const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
-
-//     if (existeReporte) {
-//       res.status(400).json({ message: "Intente de nuevo en breve" });
-//     } else {
-
-//     const newReporte = new Reporte({
-//       numero: nuevoNumeroDeReporte,
-//       fecha,
-//       categoria,
-//       detalle,
-//       naturaleza,
-//       usuario,
-//       subcategoria: subcategoria == "" ? null : subcategoria,
-//       dispositivo,
-//       rutaImagen: photo == undefined ? filePath : ""
-//     });
-
-//     await newReporte.save();
-//     res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
-//   }
-//   } catch (error) {
-//     console.log(error.name);
-//     console.log(error);
-//     if (error.name === 'ValidationError' || error.name === 'MongoServerError') {
-
-//       res.status(400).json({ message: "Hubo un error, intente nuevamente" });
-
-//     } else {
-
-//       res.status(error.code || 500).json({ message: 'Error al crear reporte' });
-//     }
-   
-//   }
-// };
-
 const agregarReporte = async (req, res) => {
   const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
 
@@ -300,58 +243,6 @@ const getReportesPaginacion = async (req,res) =>{
   }
   
 }
-
-// const getReportesPodio2 = async (req,res)=>{
-//   try {
-//     const fechaActual = new Date();
-// const primerDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
-// const ultimoDiaDelMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0);
-
-// Reporte.aggregate([
-//   {
-//     $match: {
-//       fecha: {
-//         $gte: primerDiaDelMes,
-//         $lte: ultimoDiaDelMes,
-//       },
-//     },
-//   },
-//   {
-//     $group: {
-//       _id: '$usuario',
-//       totalReportes: { $sum: 1 },
-//     },
-//   },
-//   {
-//     $sort: {
-//       totalReportes: -1,
-//     },
-//   },
-//   {
-//     $limit: 1,
-//   },
-// ])
-//   .exec((err, result) => {
-//     if (err) {
-//       console.error(err);
-//       return;
-//     }
-
-//     if (result.length > 0) {
-//       const usuarioConMasReportes = result[0]._id;
-//       const totalReportes = result[0].totalReportes;
-//       res.status(200).json({ usuariosConMasReportes: usuariosConMasReportesConDetalles });
-//       console.log(`El usuario con más reportes en el mes actual es ${usuarioConMasReportes} con un total de ${totalReportes} reportes.`);
-//     } else {
-//       console.log('No hay reportes en el mes actual.');
-//     }
-//   });
-//   } catch (error) {
-//     res
-//     .status(error.code || 500)
-//     .json({ message: error.message || "algo explotó :|" });
-//   }
-// }
 
 const getReportesPodio = async (req,res)=>{
   try {
