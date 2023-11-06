@@ -470,6 +470,56 @@ const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
   }
 }
 
+
+const getTopTresDespachadosPorMes = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    // Filtrar los reportes del mes actual y que tengan el campo 'despacho' definido
+    let reportesConDespachoYMesActual = await Reporte.find({
+      estado: true,
+      createdAt: {
+        $gte: new Date(currentYear, currentMonth, 1),
+        $lt: new Date(currentYear, currentMonth + 1, 1),
+      },
+      despacho: { $ne: undefined },
+    }).populate("usuario");
+
+    if (req.params.turno !== undefined) {
+      reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => rep.usuario.turno == req.params.turno);
+    }
+
+    // Crear un mapa para contar los despachos por usuario
+    const despachosPorUsuario = new Map();
+
+    reportesConDespachoYMesActual.forEach(rep => {
+      const usuarioId = rep.usuario._id.toString();
+      if (despachosPorUsuario.has(usuarioId)) {
+        despachosPorUsuario.get(usuarioId).totalDespachos++;
+      } else {
+        despachosPorUsuario.set(usuarioId, {
+          usuario: rep.usuario,
+          totalDespachos: 1,
+        });
+      }
+    });
+
+    // Ordenar los usuarios por cantidad de despachos
+    const sortedUsuarios = [...despachosPorUsuario.values()].sort((a, b) => b.totalDespachos - a.totalDespachos);
+
+    // Obtener los detalles de los usuarios con más despachos
+    const topTresUsuarios = sortedUsuarios.slice(0, 3);
+
+    res.status(200).json({ usuariosConMasDespachos: topTresUsuarios });
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+};
+
 module.exports = {
     agregarReporte,
     getReportes,
@@ -478,6 +528,7 @@ module.exports = {
     borrarReporte,
     getReportesPodio,
     getReportesPaginacion,
-    getMesYTotalDeReportesVisualizadorYSupervisor
+    getMesYTotalDeReportesVisualizadorYSupervisor,
+    getTopTresDespachadosPorMes
   }
   
