@@ -3,6 +3,7 @@ const CustomError = require("../utils/customError");
 const path = require('path');
 const fs = require('fs');
 const User = require("../models/User");
+const obtenerPeriodoDelDiaConHora = require("../utils/helpers");
 
 const agregarReporte = async (req, res) => {
   const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
@@ -488,7 +489,8 @@ const getTopTresDespachadosPorMes = async (req, res) => {
     }).populate("usuario");
 
     if (req.params.turno !== undefined) {
-      reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => rep.usuario.turno == req.params.turno);
+      reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => obtenerPeriodoDelDiaConHora(rep.fecha) == req.params.turno);
+      // reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => rep.usuario.turno == req.params.turno);
     }
 
     // Crear un mapa para contar los despachos por usuario
@@ -505,7 +507,7 @@ const getTopTresDespachadosPorMes = async (req, res) => {
         });
       }
     });
-
+   
     // Ordenar los usuarios por cantidad de despachos
     const sortedUsuarios = [...despachosPorUsuario.values()].sort((a, b) => b.totalDespachos - a.totalDespachos);
 
