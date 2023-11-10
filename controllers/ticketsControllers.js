@@ -9,7 +9,8 @@ const agregarTicket = async (req, res) => {
   try {
     const { fecha, descripcion, usuario, userName, dispositivo, photo, titulo } = req.body;
 
-    const folderPath = `C:\\Users\\pedro\\Desktop\\COMM\\SysGesCOM-back\\uploads\\${userName}`;
+    const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${userName}`;
+
     let filePath = "";
 
     fs.readdir(folderPath, async (err, files) => {
