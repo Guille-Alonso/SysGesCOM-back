@@ -49,7 +49,7 @@ const UserSchema = new Schema(
     },
     turno: {
       type: String,
-      enum: ["mañana", "tarde", "noche"],
+      enum: ["mañana", "tarde", "noche", "intermedio"],
       trim: true,
       required: [true, "El turno es requerido"],
     },
