@@ -1,6 +1,5 @@
 const {Schema,model} = require('mongoose');
 const mongooseUniqueValidator = require('mongoose-unique-validator');
-const getNextSequenceValue = require('../middlewares/numeroEventoUnico');
 
 const ReporteSchema = new Schema(
   {
@@ -60,14 +59,6 @@ const ReporteSchema = new Schema(
     timestamps: true,
   }
 );
-
-// ReporteSchema.pre('save', async function (next) {
-//     if (!this.numero) {
-//       const sequenceValue = await getNextSequenceValue('Reporte');
-//       this.numero = sequenceValue;
-//     }
-//     next();
-//   });
 
 ReporteSchema.plugin(mongooseUniqueValidator,{
     message: '{PATH} debe ser único'

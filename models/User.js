@@ -17,7 +17,7 @@ const UserSchema = new Schema(
       trim: true,
       uppercase: true,
       minLength: [2, "Debe tener al menos 2 caracteres"],
-      maxLength: [30, "Debe tener como máximo 30 caracteres"],
+      maxLength: [40, "Debe tener como máximo 40 caracteres"],
       required: [true, "El nombre es requerido"],
     },
     email: {
@@ -49,7 +49,7 @@ const UserSchema = new Schema(
     },
     turno: {
       type: String,
-      enum: ["mañana", "tarde", "noche"],
+      enum: ["mañana", "tarde", "noche", "intermedio"],
       trim: true,
       required: [true, "El turno es requerido"],
     },
@@ -70,6 +70,14 @@ const UserSchema = new Schema(
       type: String,
       trim: true,
       required: [true, "La contraseña es obligatoria"],
+    },
+    relevamientoHabilitado: {
+      type: Boolean,
+      default: false
+    },
+    noticias: {
+      type: Boolean,
+      default: true
     },
   },
   {

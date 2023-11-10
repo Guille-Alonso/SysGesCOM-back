@@ -9,7 +9,7 @@ const CategoriaSchema = new Schema(
             trim: true,
             uppercase:true,
             minLength: [4, "Debe tener al menos 4 caracteres"],
-            maxLength: [20, "Debe tener como máximo 20 caracteres"],
+            maxLength: [40, "Debe tener como máximo 40 caracteres"],
             required: [true, "El nombre es requerido"],
         },
         estado:{//borrado logico

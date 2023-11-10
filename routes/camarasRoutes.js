@@ -8,7 +8,7 @@ const router = Router();
 
 router.post("/alta", [auth,verifyRole,
     check("nombre", "el nombre ingresado no es correcto").not().isEmpty().isString().isLength({ max: 7 }),
-    check("ubicacion", "el valor ingresado no es correcto").not().isEmpty().isString().isLength({ min: 8, max: 30 }),
+    check("ubicacion", "el valor ingresado no es correcto").not().isEmpty().isString().isLength({ min: 8, max: 50 }),
     check("tipoDeCamara", "el valor ingresado no es correcto").not().isEmpty().isString().isIn(["camara", "domo"]),
     validateFields
 ], agregarCamara);
