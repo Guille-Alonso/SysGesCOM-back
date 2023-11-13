@@ -43,7 +43,7 @@ router.post("/alta",
     check("email", "Formato de email invalido").not().isEmpty().isEmail(),
     check("password", "La contraseña no cumple los requisitos").not().isEmpty(),
     check("perfilAltaUsuarios", "Debe ingresar un grupo valido").not().isEmpty().isString().isIn(["admin", "visualizador", "supervisor", "estadística", "administración"]),
-    check("turno", "Debe ingresar un turno valido").not().isEmpty().isString().isIn(["mañana", "tarde", "noche"]),
+    check("turno", "Debe ingresar un turno valido").not().isEmpty().isString().isIn(["mañana", "tarde", "noche","intermedio"]),
     validateFields,
   ],
   agregarUsuario

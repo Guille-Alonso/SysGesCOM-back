@@ -4,7 +4,7 @@ const CustomError = require("../utils/customError");
 
 const agregarRelevamientoMotos = async (req, res) => {
     try {
-        console.log(req.body);
+       
         const { arrayMotos,reporte } = req.body;
 
         const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
@@ -49,7 +49,20 @@ const getRelevamientoMotos = async (req, res) => {
             if (!motos) throw new CustomError("Relevamiento de motos no encontrados", 404);
             res.status(200).json({ motos });
         } else {
-            const motos = await RelevamientoMotos.find();
+            const motos = await RelevamientoMotos.find().populate({
+                path: 'reporte',
+                populate: [
+                    {
+                        path: 'dispositivo',
+                        model: 'Dispositivo'
+                    },
+                    {
+                        path: 'subcategoria',
+                        model: 'Subcategoria'
+                    }
+                ]
+            })
+            
             res.status(200).json({ motos });
         }
     } catch (error) {

@@ -3,62 +3,62 @@ const CustomError = require("../utils/customError");
 const path = require('path');
 const fs = require('fs');
 const User = require("../models/User");
+const obtenerPeriodoDelDiaConHora = require("../utils/helpers");
 
 const agregarReporte = async (req, res) => {
-  try {
-    const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
+  const { fecha, detalle, naturaleza, usuario, userName, subcategoria, dispositivo, categoria, photo } = req.body;
 
-    const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${userName}`;
-    let filePath = "";
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${userName}`;
 
-    fs.readdir(folderPath, async (err, files) => {
-      if (err) {
-        console.error('Error al leer la carpeta:', err);
-      } else {
+  fs.readdir(folderPath, async (err, files) => {
+    if (err) {
+      console.error('Error al leer la carpeta:', err);
+      // Maneja el error aquí si es necesario.
+      res.status(500).json({ message: 'Error al leer la carpeta' });
+    } else {
+
+      try {
         const lastFile = files[files.length - 1];
-        filePath = path.join(folderPath, lastFile);
+        const filePath = path.join(folderPath, lastFile);
+
+        const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
+        const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
+
+        // Verificar si el número de reporte ya existe en la colección
+        const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
+
+        if (existeReporte) {
+          res.status(400).json({ message: "Intente de nuevo en breve" });
+        } else {
+          const newReporte = new Reporte({
+            numero: nuevoNumeroDeReporte,
+            fecha,
+            categoria,
+            detalle,
+            naturaleza,
+            usuario,
+            subcategoria: subcategoria == "" ? null : subcategoria,
+            dispositivo,
+            rutaImagen: photo == undefined ? filePath : ""
+          });
+
+          await newReporte.save();
+          res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
+        }
+
+      } catch (error) {
+        console.log(error.name);
+        console.log(error);
+        if (error.name === 'ValidationError' || error.name === 'MongoServerError') {
+          res.status(400).json({ message: "Hubo un error, intente nuevamente" });
+        } else {
+          res.status(error.code || 500).json({ message: 'Error al crear reporte' });
+        }
       }
-
-    });
-
-    const ultimoReporte = await Reporte.find().sort({ _id: -1 }).limit(1);
-    const nuevoNumeroDeReporte = ultimoReporte.length > 0 ? ultimoReporte[0].numero + 1 : 1;
-
-    // Verificar si el número de reporte ya existe en la colección
-    const existeReporte = await Reporte.findOne({ numero: nuevoNumeroDeReporte });
-
-    if (existeReporte) {
-      res.status(400).json({ message: "Intente de nuevo en breve" });
-    } else {
-
-    const newReporte = new Reporte({
-      numero: nuevoNumeroDeReporte,
-      fecha,
-      categoria,
-      detalle,
-      naturaleza,
-      usuario,
-      subcategoria: subcategoria == "" ? null : subcategoria,
-      dispositivo,
-      rutaImagen: photo == undefined ? filePath : ""
-    });
-
-    await newReporte.save();
-    res.status(200).json({ message: "Se agregó un nuevo reporte con éxito" });
-  }
-  } catch (error) {
-    console.log(error);
-    if (error.name === 'ValidationError') {
-
-      res.status(400).json({ message: "Hubo un error, intente nuevamente" });
-
-    } else {
-
-      res.status(error.code || 500).json({ message: 'Error al crear reporte' });
     }
-   
-  }
+  });
 };
+
 
 const getReportes = async (req, res) => {
   try {
@@ -330,7 +330,7 @@ console.log(req.body);
     // const updatedReporte = req.body;
 
   //logica de la imagen a reemplazar
-  const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\uploads\\${req.body.userName}`;
+  const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\uploads\\${req.body.userName}`;
   let filePath="";
 
   if(req.body.rutaImagen !== "" && req.body.photo == undefined){
@@ -471,6 +471,57 @@ const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
   }
 }
 
+
+const getTopTresDespachadosPorMes = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    // Filtrar los reportes del mes actual y que tengan el campo 'despacho' definido
+    let reportesConDespachoYMesActual = await Reporte.find({
+      estado: true,
+      createdAt: {
+        $gte: new Date(currentYear, currentMonth, 1),
+        $lt: new Date(currentYear, currentMonth + 1, 1),
+      },
+      despacho: { $ne: undefined },
+    }).populate("usuario");
+
+    if (req.params.turno !== undefined) {
+      reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => obtenerPeriodoDelDiaConHora(rep.fecha) == req.params.turno);
+      // reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => rep.usuario.turno == req.params.turno);
+    }
+
+    // Crear un mapa para contar los despachos por usuario
+    const despachosPorUsuario = new Map();
+
+    reportesConDespachoYMesActual.forEach(rep => {
+      const usuarioId = rep.usuario._id.toString();
+      if (despachosPorUsuario.has(usuarioId)) {
+        despachosPorUsuario.get(usuarioId).totalDespachos++;
+      } else {
+        despachosPorUsuario.set(usuarioId, {
+          usuario: rep.usuario,
+          totalDespachos: 1,
+        });
+      }
+    });
+   
+    // Ordenar los usuarios por cantidad de despachos
+    const sortedUsuarios = [...despachosPorUsuario.values()].sort((a, b) => b.totalDespachos - a.totalDespachos);
+
+    // Obtener los detalles de los usuarios con más despachos
+    const topTresUsuarios = sortedUsuarios.slice(0, 3);
+
+    res.status(200).json({ usuariosConMasDespachos: topTresUsuarios });
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "algo explotó :|" });
+  }
+};
+
 module.exports = {
     agregarReporte,
     getReportes,
@@ -479,6 +530,7 @@ module.exports = {
     borrarReporte,
     getReportesPodio,
     getReportesPaginacion,
-    getMesYTotalDeReportesVisualizadorYSupervisor
+    getMesYTotalDeReportesVisualizadorYSupervisor,
+    getTopTresDespachadosPorMes
   }
   
