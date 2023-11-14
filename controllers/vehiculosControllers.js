@@ -24,7 +24,7 @@ const agregarVehiculo = async (req, res) => {
 
         for (let index = 0; index < arrayVehiculos.length; index++) {
             let clave = Object.keys(arrayVehiculos[index])[0];
-            let valor = arrayDeObjetos[index][clave];
+            let valor = arrayVehiculos[index][clave];
             if (valor !== 0) {
                 let newVehiculos = new Vehiculos({
                     vehiculo: clave,
@@ -34,6 +34,7 @@ const agregarVehiculo = async (req, res) => {
                 console.log(newVehiculos);
                 await newVehiculos.save();
             }
+
 
         }
         res.status(201).json({ message: "Se agregó un nuevo reporte de vehículo" });
