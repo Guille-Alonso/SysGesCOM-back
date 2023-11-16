@@ -7,8 +7,9 @@ const verifyStatusUserMotos = require("../middlewares/verifyStatusUserMotos");
 const verifyRoleEstadistica = require("../middlewares/verifyRolEstadistica");
 const router = Router();
 
-router.post("/alta", auth, agregarVehiculo);
+router.post("/alta", auth, verifyStatusUserMotos, agregarVehiculo);
 
 router.get("/listar", auth, verifyRoleEstadistica, getVehiculos);
+
 
 module.exports = router;

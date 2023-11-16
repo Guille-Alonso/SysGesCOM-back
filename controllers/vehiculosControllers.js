@@ -50,11 +50,11 @@ const agregarVehiculo = async (req, res) => {
 const getVehiculos = async (req, res) => {
     try {
         if (req.params.solicitante) {
-            const motos = await RelevamientoMotos.findOne();
-            if (!motos) throw new CustomError("Relevamiento de motos no encontrados", 404);
-            res.status(200).json({ motos });
+            const vehiculos = await Vehiculos.findOne();
+            if (!vehiculos) throw new CustomError("Relevamiento de vehiculos no encontrados", 404);
+            res.status(200).json({ vehiculos });
         } else {
-            const motos = await RelevamientoMotos.find().populate({
+            const vehiculos = await Vehiculos.find().populate({
                 path: 'reporte',
                 populate: [
                     {
@@ -68,7 +68,7 @@ const getVehiculos = async (req, res) => {
                 ]
             })
 
-            res.status(200).json({ motos });
+            res.status(200).json({ vehiculos });
         }
     } catch (error) {
         res
