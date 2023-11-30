@@ -75,6 +75,8 @@ const obtenerArchivosDeUnaNoticia = async (req,res)=>{
                 
                 zip.finalize();
           
+            }else if(archivosNoticia.length==0){
+                throw new CustomError("Noticia sin archivos", 404);
             }else{
 
                 if (fs.existsSync(archivosNoticia[0].rutaArchivo)) {
