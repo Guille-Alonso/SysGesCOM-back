@@ -9,7 +9,7 @@ const NoticiaSchema = new Schema(
             trim: true,
             uppercase:true,
             minLength: [4, "Debe tener al menos 4 caracteres"],
-            maxLength: [40, "Debe tener como máximo 40 caracteres"],
+            maxLength: [200, "Debe tener como máximo 200 caracteres"],
             required: [true, "El título es requerido"],
         },
         fecha: {

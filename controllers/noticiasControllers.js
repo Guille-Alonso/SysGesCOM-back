@@ -12,12 +12,11 @@ const agregarNoticia = async (req, res) => {
 
     const userReq = req.user;
 
-    const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\archivosNoticia\\${userReq.nombreUsuario}`;
+    const folderPath = `C:\\Users\\pedro\\Desktop\\COMM\\SysGesCOM-back\\archivosNoticia\\${userReq.nombreUsuario}`;
 
     fs.readdir(folderPath, async (err, files) => {
         if (err) {
             console.error('Error al leer la carpeta:', err);
-            // Maneja el error aquí si es necesario.
             res.status(500).json({ message: 'Error al leer la carpeta' });
         } else {
 
@@ -48,7 +47,7 @@ const agregarNoticia = async (req, res) => {
                 if (error.name === 'ValidationError' || error.name === 'MongoServerError') {
                     res.status(400).json({ message: "Hubo un error, intente nuevamente" });
                 } else {
-                    res.status(error.code || 500).json({ message: 'Error al crear reporte' });
+                    res.status(error.code || 500).json({ message: 'Error al crear noticia' });
                 }
             }
         }
@@ -80,7 +79,7 @@ const obtenerArchivosDeUnaNoticia = async (req,res)=>{
                 if (fs.existsSync(archivosNoticia[0].rutaArchivo)) {
                     res.sendFile(archivosNoticia[0].rutaArchivo);
                   } else {
-                    throw new CustomError("archivo no encontrado", 404);
+                    throw new CustomError("Archivo no encontrado", 404);
                   }
             }
         
@@ -88,7 +87,7 @@ const obtenerArchivosDeUnaNoticia = async (req,res)=>{
     } catch (error) {
         res
         .status(error.code || 500)
-        .json({ message: error.message || "algo explotó :|" });
+        .json({ message: error.message || "Algo explotó :|" });
     }
 }
 
@@ -100,7 +99,7 @@ const obtenerNoticias = async (req,res) =>{
     } catch (error) {
         res
         .status(error.code || 500)
-        .json({ message: error.message || "algo explotó :|" });
+        .json({ message: error.message || "Algo explotó :|" });
     }
 }
 
@@ -111,12 +110,12 @@ const borrarNoticias = async (req,res) =>{
           estado:false
         }
         const noticiaEliminada = await Noticia.findByIdAndUpdate(id,noticiaRemove,{new:true})
-        if(!noticiaEliminada) throw new CustomError("noticia no encontrada",404)
+        if(!noticiaEliminada) throw new CustomError("Noticia no encontrada",404)
         res.status(200).json({message:"Noticia eliminada con éxito"})
     } catch (error) {
         res
         .status(error.code || 500)
-        .json({ message: error.message || "algo explotó :|" });
+        .json({ message: error.message || "Algo explotó :/" });
     }
 }
 
