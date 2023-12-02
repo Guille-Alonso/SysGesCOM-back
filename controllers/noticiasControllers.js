@@ -67,10 +67,14 @@ const obtenerArchivosDeUnaNoticia = async (req,res)=>{
                 zip.pipe(res);
                 
                 archivosNoticia.forEach((archivo) => {
-                   
+                   if(fs.existsSync(archivo.rutaArchivo)){
                     const partesRuta = archivo.rutaArchivo.split('\\');
                     const nombreArchivo = partesRuta[partesRuta.length - 1];
-                  zip.append(fs.createReadStream(archivo.rutaArchivo), { name: nombreArchivo });
+                    zip.append(fs.createReadStream(archivo.rutaArchivo), { name: nombreArchivo });
+                   }else{
+                    throw new CustomError("archivo no encontrado", 404);
+                   }
+                  
                 });
                 
                 zip.finalize();
