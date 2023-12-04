@@ -100,7 +100,7 @@ const obtenerArchivosDeUnaNoticia = async (req,res)=>{
 
 const obtenerNoticias = async (req,res) =>{
     try {
-        const noticias = await Noticia.find({estado:true}).populate("usuario");
+        const noticias = await Noticia.find({ estado: true }).populate("usuario").sort({ createdAt: -1 });
         res.status(200).json({ noticias });
         
     } catch (error) {

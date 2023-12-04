@@ -28,7 +28,7 @@ const NoticiaSchema = new Schema(
     },
     {
         versionKey: false,
-        timestamps: false,
+        timestamps: true,
     }
 );
 
