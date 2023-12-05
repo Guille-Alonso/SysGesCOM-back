@@ -3,10 +3,11 @@ const CustomError = require("../utils/customError");
 
 const agregarPedidoCambio = async (req, res) => {
     try {
-        const { pedido, estado, solicitante } = req.body;
+        const { pedido, estado, solicitante,pedidoDevolucion} = req.body;
         const newPedidoCambio = new PedidoCambio({
             pedido,
             estado,
+            pedidoDevolucion,
             solicitante
         });
          await newPedidoCambio.save();
