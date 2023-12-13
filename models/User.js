@@ -61,6 +61,7 @@ const UserSchema = new Schema(
         "supervisor",
         "estadística",
         "administración",
+        "tránsito"
       ],
       trim: true,
       required: [true, "El tipo de usuario es requerido"],
