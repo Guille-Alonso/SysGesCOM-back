@@ -47,25 +47,25 @@ const UserSchema = new Schema(
       type: String,
       unique: true,
     },
-    turno: {
-      type: String,
-      enum: ["mañana", "tarde", "noche", "intermedio"],
-      trim: true,
-      required: [true, "El turno es requerido"],
-    },
-    tipoDeUsuario: {
-      type: String,
-      enum: [
-        "admin",
-        "visualizador",
-        "supervisor",
-        "estadística",
-        "administración",
-        "tránsito"
-      ],
-      trim: true,
-      required: [true, "El tipo de usuario es requerido"],
-    },
+    // turno: {
+    //   type: String,
+    //   enum: ["mañana", "tarde", "noche", "intermedio"],
+    //   trim: true,
+    //   required: [true, "El turno es requerido"],
+    // },
+    // tipoDeUsuario: {
+    //   type: String,
+    //   enum: [
+    //     "admin",
+    //     "visualizador",
+    //     "supervisor",
+    //     "estadística",
+    //     "administración",
+    //     "tránsito"
+    //   ],
+    //   trim: true,
+    //   required: [true, "El tipo de usuario es requerido"],
+    // },
 
     contraseña: {
       type: String,
@@ -79,6 +79,16 @@ const UserSchema = new Schema(
     noticias: {
       type: Boolean,
       default: true
+    },
+    turno: {
+      type: Schema.Types.ObjectId,
+      ref: "Turno",
+      required: [true, "El turno es requerido"],
+    },
+    tipoDeUsuario: {
+      type: Schema.Types.ObjectId,
+      ref: "Rol",
+      required: [true, "El rol es requerido"],
     },
   },
   {

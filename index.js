@@ -20,6 +20,8 @@ const relevamientoMotosRoutes = require('./routes/relevamientoMotosRoutes')
 const relevamientoVehicularRoutes = require('./routes/relevamientoVehicularRoutes')
 const ticketsRoutes = require('./routes/ticketsRoutes')
 const noticiasRoutes = require('./routes/noticiasRoutes')
+const turnosRoutes = require("./routes/turnosRoutes")
+const rolesRoutes = require("./routes/rolesRoutes")
 
 const app = express();
 app.use(cors());
@@ -45,5 +47,7 @@ app.use('/relevamientoMotos', relevamientoMotosRoutes)
 app.use('/relevamientoVehicular', relevamientoVehicularRoutes)
 app.use('/tickets', ticketsRoutes)
 app.use('/noticias', noticiasRoutes)
+app.use('/turnos', turnosRoutes)
+app.use('/roles', rolesRoutes)
 
 app.listen(PORT, () => { console.log(`server listening on port ${PORT}`) })

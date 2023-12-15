@@ -42,7 +42,7 @@ const getUsers = async (req, res) => {
       if (!user) throw new CustomError("Usuario no encontrado", 404);
       res.status(200).json({ user });
     } else {
-      const users = await User.find({ estado: true });
+      const users = await User.find({ estado: true }).populate("turno").populate("tipoDeUsuario");
       res.status(200).json({ users });
     }
   } catch (error) {
@@ -146,7 +146,7 @@ const agregarUsuario = async (req, res) => {
       email,
       afiliado: numAfil,
       turno,
-      tipoDeUsuario: perfilAltaUsuarios.toLowerCase(),
+      tipoDeUsuario: perfilAltaUsuarios.toLowerCase(),//cambiar aqui y en front (enviar como tipoDeUsuario al id)
       contraseña: passwordEncrypted,
       foto: photo,
     });
