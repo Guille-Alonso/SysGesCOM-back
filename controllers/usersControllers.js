@@ -38,7 +38,7 @@ const actualizarUser =
 const getUsers = async (req, res) => {
   try {
     if (req.params.email) {
-      const user = await User.findOne({ email: req.params.email });
+      const user = await User.findOne({ email: req.params.email }).populate("turno").populate("tipoDeUsuario");;
       if (!user) throw new CustomError("Usuario no encontrado", 404);
       res.status(200).json({ user });
     } else {
@@ -95,7 +95,7 @@ const getAuthStatus = async (req, res) => {
   try {
     const id = req.id;
 
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("turno").populate("tipoDeUsuario");
     if (!user) throw new CustomError("Autenticación fallida", 401);
     res.status(200).json({ user });
   } catch (error) {
@@ -111,7 +111,7 @@ const login = async (req, res) => {
     const { nombreUsuario, contraseña } = req.body;
     if (!nombreUsuario || !contraseña)
       throw new CustomError("Usuario y contraseña son requeridas", 400);
-    const user = await User.findOne({ nombreUsuario });
+    const user = await User.findOne({ nombreUsuario }).populate("turno").populate("tipoDeUsuario");
     if (!user) throw new CustomError("Usuario no encontrado", 404);
     const passOk = await bcrypt.compare(contraseña, user.contraseña);
     if (!passOk) throw new CustomError("Contraseña incorrecta", 400);

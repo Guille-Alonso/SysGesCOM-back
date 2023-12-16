@@ -73,7 +73,7 @@ const getReportes = async (req, res) => {
       }
 
     } else {
-      if (req.user.tipoDeUsuario == "visualizador") {
+      if (req.user.tipoDeUsuario.nombre == "visualizador") {
         const fechaActual = new Date();
         fechaActual.setHours(0, 0, 0, 0);
         const fechaSiguiente = new Date(fechaActual);
@@ -95,10 +95,14 @@ const getReportes = async (req, res) => {
           .populate({
             path: 'despacho',
             populate: [
-                {
-                    path: 'usuario',
-                    model: 'User'
-                },
+              {
+                path: 'usuario',
+                model: 'User',
+                populate: [
+                  { path: 'tipoDeUsuario' },
+                  { path: 'turno' }
+                ]
+              },
                 {
                     path: 'reparticiones',
                     model: 'Reparticion'
@@ -107,7 +111,7 @@ const getReportes = async (req, res) => {
         });
 
         res.status(200).json({ reportes });
-      } else if (req.user.tipoDeUsuario == "supervisor") {
+      } else if (req.user.tipoDeUsuario.nombre == "supervisor") {
         const fechaActual = new Date();
         fechaActual.setHours(0, 0, 0, 0);
         const fechaAnterior = new Date(fechaActual);
@@ -130,10 +134,14 @@ const getReportes = async (req, res) => {
           .populate({
             path: 'despacho',
             populate: [
-                {
-                    path: 'usuario',
-                    model: 'User'
-                },
+              {
+                path: 'usuario',
+                model: 'User',
+                populate: [
+                  { path: 'tipoDeUsuario' },
+                  { path: 'turno' }
+                ]
+              },
                 {
                     path: 'reparticiones',
                     model: 'Reparticion'
@@ -153,15 +161,19 @@ const getReportes = async (req, res) => {
           .populate("naturaleza")
           .populate("categoria")
           .populate("subcategoria")
-          .populate("usuario")
+          .populate("usuario") // AGREGAR POPULATE INTERNOS
           .populate("dispositivo")
           .populate({
             path: 'despacho',
             populate: [
-                {
-                    path: 'usuario',
-                    model: 'User'
-                },
+              {
+                path: 'usuario',
+                model: 'User',
+                populate: [
+                  { path: 'tipoDeUsuario' },
+                  { path: 'turno' }
+                ]
+              },
                 {
                     path: 'reparticiones',
                     model: 'Reparticion'
@@ -191,16 +203,20 @@ const getReportesHistorico = async (req,res) => {
       .populate({
         path: 'despacho',
         populate: [
-            {
-                path: 'usuario',
-                model: 'User'
-            },
-            {
-                path: 'reparticiones',
-                model: 'Reparticion'
-            }
+          {
+            path: 'usuario',
+            model: 'User',
+            populate: [
+              { path: 'tipoDeUsuario' },
+              { path: 'turno' }
+            ]
+          },
+          {
+            path: 'reparticiones',
+            model: 'Reparticion'
+          }
         ]
-    });
+      })
    
     res.status(200).json({ reportes });
   } catch (error) {
@@ -226,10 +242,13 @@ const getReportesPaginacion = async (req,res) =>{
       path: 'despacho',
       populate: {
         path: 'usuario',
-        model: 'User'
+        model: 'User',
+        populate: [
+          { path: 'tipoDeUsuario' },
+          { path: 'turno' }
+        ]
       }
     })
-    //.populate("despacho");
 
     const totalDocuments = await Reporte.countDocuments({ estado: true });
     const totalPages = Math.ceil(totalDocuments / perPage);
@@ -247,10 +266,18 @@ const getReportesPaginacion = async (req,res) =>{
 
 const getReportesPodio = async (req,res)=>{
   try {
-    let reportes = await Reporte.find({ estado: true }).populate("usuario");
+    // let reportes = await Reporte.find({ estado: true }).populate("usuario");
+    let reportes = await Reporte.find({ estado: true })
+    .populate({
+        path: 'usuario',
+        populate: [
+            { path: 'tipoDeUsuario' },
+            { path: 'turno' }
+        ]
+    });
 
     if(req.params.turno !== undefined){
-      reportes = reportes.filter(rep => rep.usuario.turno == req.params.turno)
+      reportes = reportes.filter(rep => rep.usuario.turno.nombre == req.params.turno)
     }
 
     const currentDate = new Date();
@@ -302,7 +329,7 @@ const getReportesPodio = async (req,res)=>{
       }
     }
 
-    const usuariosCompletos = await User.find({ _id: { $in: top3UsuariosPorMes.map(user => user.usuario) } });
+    const usuariosCompletos = await User.find({ _id: { $in: top3UsuariosPorMes.map(user => user.usuario) } }).populate("turno").populate("tipoDeUsuario");
 
     const usuariosConMasReportesConDetalles = top3UsuariosPorMes.map(usuario => {
       const usuarioCompleto = usuariosCompletos.find(user => user._id.toString() === usuario.usuario);
@@ -397,7 +424,7 @@ const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
     fechaPasada.setMonth(fechaPasada.getMonth() - 1); // Restar 1 al mes actual
     const mesAnterior = fechaActual.toLocaleString('es-ES', { month: 'short' });
 
-    if(req.user.tipoDeUsuario == "visualizador"){
+    if(req.user.tipoDeUsuario.nombre == "visualizador"){
 
     const reportesTotalMes = await Reporte.find({
       estado: true,
@@ -417,7 +444,7 @@ const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
     }).populate("categoria");
 
     res.status(200).json({ totalMes: reportesTotalMes, totalHistorico: reportesTotal, totalMesPasado: reportesTotalMesPasado });
-  }else if(req.user.tipoDeUsuario == "supervisor"){
+  }else if(req.user.tipoDeUsuario.nombre == "supervisor"){
 
     const despachosTotalMes = await Reporte.find({
       estado: true,
@@ -426,13 +453,15 @@ const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
       
     }).populate({
       path: 'despacho',
-      populate: 
-          {
-              path: 'usuario',
-              model: 'User'
-          }
-      
-  }).populate("categoria")
+      populate: {
+        path: 'usuario',
+        model: 'User',
+        populate: [
+          { path: 'tipoDeUsuario' },
+          { path: 'turno' }
+        ]
+      }
+    }).populate("categoria"); 
 
   const despachosTotalMesPasado = await Reporte.find({
     estado: true,
@@ -441,26 +470,30 @@ const getMesYTotalDeReportesVisualizadorYSupervisor = async (req,res)=>{
     
   }).populate({
     path: 'despacho',
-    populate: 
-        {
-            path: 'usuario',
-            model: 'User'
-        }
-    
-}).populate("categoria")
+    populate: {
+      path: 'usuario',
+      model: 'User',
+      populate: [
+        { path: 'tipoDeUsuario' },
+        { path: 'turno' }
+      ]
+    }
+  }).populate("categoria"); 
 
-    const despachosTotal = await Reporte.find({
-      estado:true,
-      despacho: { $ne: null },
-      
-    }).populate({
-      path: 'despacho',
-      populate: 
-          {
-              path: 'usuario',
-              model: 'User'
-          }
-  }).populate("categoria")
+  const despachosTotal = await Reporte.find({
+    estado: true,
+    despacho: { $ne: null },
+  }).populate({
+    path: 'despacho',
+    populate: {
+      path: 'usuario',
+      model: 'User',
+      populate: [
+        { path: 'tipoDeUsuario' },
+        { path: 'turno' }
+      ]
+    }
+  }).populate("categoria");  
 
     res.status(200).json({ totalMes: despachosTotalMes.filter(rep=>rep.despacho.usuario._id.toString()==req.user._id), totalHistorico: despachosTotal.filter(rep=>rep.despacho.usuario._id.toString()==req.user._id), totalMesPasado: despachosTotalMesPasado.filter(rep=>rep.despacho.usuario._id.toString()==req.user._id)});
   }
@@ -486,7 +519,13 @@ const getTopTresDespachadosPorMes = async (req, res) => {
         $lt: new Date(currentYear, currentMonth + 1, 1),
       },
       despacho: { $ne: undefined },
-    }).populate("usuario");
+    }).populate({
+        path: 'usuario',
+        populate: [
+            { path: 'tipoDeUsuario' },
+            { path: 'turno' }
+        ]
+    });
 
     if (req.params.turno !== undefined) {
       reportesConDespachoYMesActual = reportesConDespachoYMesActual.filter(rep => obtenerPeriodoDelDiaConHora(rep.fecha) == req.params.turno);

@@ -22,8 +22,8 @@ const agregarRol = async (req, res) => {
   const getRoles = async (req, res) => {
     try {
    
-        const rol = await Rol.find({estado:true});
-        res.status(200).json({ rol });
+        const roles = await Rol.find({estado:true});
+        res.status(200).json({ roles });
       
     } catch (error) {
       res

@@ -12,7 +12,7 @@ const agregarNoticia = async (req, res) => {
 
     const userReq = req.user;
 
-    const folderPath = `C:\\Users\\Administrador\\Desktop\\Sistema de Gestion\\SysGesCOM-back-dev\\archivosNoticia\\${userReq.nombreUsuario}`;
+    const folderPath = `C:\\Users\\g.alonso\\Desktop\\SysGesCOM-back\\archivosNoticia\\${userReq.nombreUsuario}`;
 
     fs.readdir(folderPath, async (err, files) => {
         if (err) {

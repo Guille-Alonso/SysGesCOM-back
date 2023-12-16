@@ -3,8 +3,8 @@ const User = require("../models/User");
 const verifyRoleAdministracion = async (req, res, next) => {
   try {
     const id = req.id;
-    const user = await User.findById(id);
-    if (user.tipoDeUsuario == "administración" || user.tipoDeUsuario == "admin") {
+    const user = await User.findById(id).populate("turno").populate("tipoDeUsuario");
+    if (user.tipoDeUsuario.nombre == "administración" || user.tipoDeUsuario.nombre == "admin") {
       next();
     } else {
       throw new Error("Usted no está autorizado");

@@ -29,13 +29,29 @@ const getCambios = async (req, res) => {
             res.status(200).json({ cambios });
         } else {
             console.log(req.user.tipoDeUsuario);
-            const cambiosBack = await PedidoCambio.find().populate("solicitante").populate("solicitado");
-            if(req.user.tipoDeUsuario=="admin" || req.user.tipoDeUsuario=="administración"){
+            const cambiosBack = await PedidoCambio.find().populate({
+                path: 'solicitante',
+                model: 'User',
+                populate: [
+                  { path: 'tipoDeUsuario' },
+                  { path: 'turno' }
+                ]
+              }).populate({
+                path: 'solicitado',
+                model: 'User',
+                populate: [
+                  { path: 'tipoDeUsuario' },
+                  { path: 'turno' }
+                ]
+              });
+              
+
+            if(req.user.tipoDeUsuario.nombre=="admin" || req.user.tipoDeUsuario.nombre=="administración"){
              
                 res.status(200).json({ cambios:cambiosBack });
             }else{
 
-                const cambios = cambiosBack.filter(camb=>camb.solicitante.tipoDeUsuario == req.user.tipoDeUsuario)
+                const cambios = cambiosBack.filter(camb=>camb.solicitante.tipoDeUsuario.nombre == req.user.tipoDeUsuario.nombre)
                 res.status(200).json({ cambios });
             }
 
@@ -52,7 +68,22 @@ const getCambiosVisualizador = async (req, res) => {
         const cambios = await PedidoCambio.find({   $or: [
             { solicitante: req.user._id },
             { solicitado: req.user._id }
-          ] }).populate("solicitante").populate("solicitado");
+          ] }).populate({
+            path: 'solicitante',
+            model: 'User',
+            populate: [
+              { path: 'tipoDeUsuario' },
+              { path: 'turno' }
+            ]
+          }).populate({
+            path: 'solicitado',
+            model: 'User',
+            populate: [
+              { path: 'tipoDeUsuario' },
+              { path: 'turno' }
+            ]
+          });
+
         res.status(200).json({ cambios });
 
     } catch (error) {

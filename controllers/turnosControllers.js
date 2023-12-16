@@ -23,8 +23,8 @@ const agregarTurno = async (req, res) => {
   const getTurnos = async (req, res) => {
     try {
    
-        const turno = await Turno.find({estado:true});
-        res.status(200).json({ turno });
+        const turnos = await Turno.find({estado:true});
+        res.status(200).json({ turnos });
       
     } catch (error) {
       res

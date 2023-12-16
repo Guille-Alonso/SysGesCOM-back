@@ -3,8 +3,8 @@ const User = require("../models/User");
 const verifyRoleEstadistica = async (req, res, next) => {
   try {
     const id = req.id;
-    const user = await User.findById(id);
-    if (user.tipoDeUsuario == "estadística" || user.tipoDeUsuario == "admin") {
+    const user = await User.findById(id).populate("turno").populate("tipoDeUsuario");
+    if (user.tipoDeUsuario.nombre == "estadística" || user.tipoDeUsuario.nombre == "admin") {
       next();
     } else {
       throw new Error("Usted no está autorizado");

@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
     const { id } = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.id = id;
     
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("turno").populate("tipoDeUsuario");
     req.user = user;
     next();
   } catch (error) {
